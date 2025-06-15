@@ -1,0 +1,52 @@
+# Claude Code実行ファイル・バイナリ
+local/
+
+# プロジェクト固有のセッションデータ
+projects/
+
+# ユーザー固有の設定・認証情報
+.credentials.json
+
+# セッション・一時データ
+todos/
+statsig/
+
+# ログファイル
+*.log
+logs/
+
+# 一時ファイル・検証スクリプト
+verify_*.sh
+check_*.sh
+validation_*.sh
+temp_*.sh
+debug_*.sh
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# OS固有ファイル
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.lnk
+
+# エディタ固有ファイル
+.vscode/
+.idea/
+ide/
+*.swp
+*.swo
+*~
+
+# 機密情報
+*secret*
+*private*
+*token*
+*key*
+.env*

@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Bash(*:*)",
+      "List(*)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Update",
+      "Update(*)",
+      "Fetch",
+      "Fetch(*)",
+      "WebFetch",
+      "WebFetch(*)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": []
+  },
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": 10800000
+  }
+}
