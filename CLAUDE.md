@@ -33,7 +33,7 @@ upstream優先、メインブランチ自動判定、no-track設定でブラン�
 
 ### レビュー対応
 「レビューに対応してください」→ PRコメント・サジェストコメント両方に対応
-- Copilot: gh apiでサジェスト含む全取得
+- Copilot: gh apiでサジェスト含む全取得、不適切なコメントは理由返信→Resolve
 - Human (book000): 全コメント確認・対応・Resolve
 詳細: @workflows/copilot-review.md
 
