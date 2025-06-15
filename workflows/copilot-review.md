@@ -170,10 +170,11 @@ gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments | jq -r '.[] | select(.us
    - 修正内容の動作確認
    - 副作用の確認
 
-5. **レスポンス**
-   - 修正コミット・プッシュ
+5. **レスポンス（必須手順）**
+   - **修正コミット・プッシュ**（最重要 - 忘れやすい手順）
    - コメントへの返信（必要に応じて）
-   - 「Resolve conversation」での解決
+   - GraphQL APIでreview threadをresolve
+   - 完了報告コメント追加
 
 ### 注意事項
 
