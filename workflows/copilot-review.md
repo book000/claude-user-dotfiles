@@ -325,47 +325,62 @@ gh api -X POST repos/{owner}/{repo}/pulls/{pull_number}/comments \
 
 #### **GraphQL API使用**
 ```bash
-# 会話を解決
+# 会話を解決（単一）
 gh api graphql -f query='
-  mutation ResolveThread($threadId: ID!) {
-    resolveReviewThread(input: {threadId: $threadId}) {
-      thread {
-        id
-        isResolved
-        resolvedBy {
-          login
-        }
-      }
+mutation {
+  resolveReviewThread(input: {threadId: "THREAD_ID"}) {
+    thread {
+      id
+      isResolved
     }
   }
-' -F threadId="{thread_id}"
+}'
+
+# 複数会話の一括解決
+gh api graphql -f query='
+mutation {
+  resolveReviewThread(input: {threadId: "PRRT_kwDOGIpaB85SSRmV"}) {
+    thread {
+      id
+      isResolved
+    }
+  }
+}' && gh api graphql -f query='
+mutation {
+  resolveReviewThread(input: {threadId: "PRRT_kwDOGIpaB85SSRmW"}) {
+    thread {
+      id
+      isResolved
+    }
+  }
+}'
 ```
 
 #### **スレッドID取得**
 ```bash
 # PRのレビュースレッド一覧を取得
 gh api graphql -f query='
-  query GetPullRequestThreads($owner: String!, $repo: String!, $number: Int!) {
-    repository(owner: $owner, name: $repo) {
-      pullRequest(number: $number) {
-        reviewThreads(first: 100) {
-          nodes {
-            id
-            isResolved
-            path
-            line
-            comments(first: 1) {
-              nodes {
-                id
-                body
+query {
+  repository(owner: "book000", name: "memo") {
+    pullRequest(number: 553) {
+      reviewThreads(first: 20) {
+        nodes {
+          id
+          isResolved
+          comments(first: 5) {
+            nodes {
+              id
+              author {
+                login
               }
+              body
             }
           }
         }
       }
     }
   }
-' -F owner="{owner}" -F repo="{repo}" -F number={pr_number}
+}'
 ```
 
 ### 完全な対応フロー例
