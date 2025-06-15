@@ -5,46 +5,103 @@
 - **upstream優先**: upstreamが存在する場合は、upstreamのメインブランチをベースとする
 - **メインブランチ自動判定**: main/masterブランチを自動的に判定
 - **no-track**: 作業ブランチは追跡しない設定で作成
+- **Conventional Commits形式**: ブランチ名は`<type>/<description>`形式
 
-## 実装手順
+## Claude Codeによる自動ブランチ作成
 
-### 1. メインブランチの判定
+### **基本フロー**
+Claude Codeが以下を自動実行：
+1. upstream/origin判定とメインブランチ取得
+2. Issueタイトルから適切なタイプを判定
+3. Conventional Commits形式のブランチ名生成
+4. no-track設定でブランチ作成・切り替え
 
-```bash
-# upstreamが存在するかチェック
-if git remote get-url upstream >/dev/null 2>&1; then
-    REMOTE="upstream"
-else
-    REMOTE="origin"
-fi
-
-# メインブランチを自動判定
-MAIN_BRANCH=$(git remote show $REMOTE | grep "HEAD branch" | cut -d' ' -f5)
-echo "Using $REMOTE/$MAIN_BRANCH as base branch"
+### **リモート判定ロジック**
+```
+1. upstreamが存在するかチェック
+2. 存在する場合: upstream を使用
+3. 存在しない場合: origin を使用
+4. メインブランチ（main/master）を自動判定
 ```
 
-### 2. ブランチ作成
+### **ブランチタイプ判定**
+Issueタイトルから以下のルールで自動判定：
+- `bug|fix|error|修正` → `fix/`
+- `feature|add|implement|機能|追加` → `feat/`
+- `doc|readme|ドキュメント` → `docs/`
+- `test|テスト` → `test/`
+- `refactor|リファクタ` → `refactor/`
+- その他 → `fix/`（デフォルト）
 
-```bash
-# 作業ブランチを作成（no-track）- Conventional Commits形式
-git checkout -b <type>/<description> --no-track $REMOTE/$MAIN_BRANCH
+### **ブランチ名生成ルール**
+```
+形式: <type>/<description>
 
-# 例:
-# feat/user-authentication
-# fix/password-validation
-# docs/api-documentation
-# refactor/database-queries
+例:
+- feat/user-authentication
+- fix/password-validation
+- docs/api-documentation
+- refactor/database-queries
+- test/user-registration
+- style/eslint-rules
+- perf/query-optimization
 ```
 
-### 3. 完全なワークフロー例
+### **説明部分の生成**
+Issueタイトルから以下の処理で生成：
+1. 英数字以外をハイフンに変換
+2. 連続ハイフンを単一に統一
+3. 小文字に変換
+4. 先頭・末尾のハイフンを除去
+5. 30文字以内に制限
+
+## ブランチ作成の実行例
+
+### **Issue #123 "ユーザー認証機能の追加"の場合**
+```
+判定結果:
+- タイプ: feat (「追加」から判定)
+- 説明: user-authentication-function (タイトルから生成)
+- ブランチ名: feat/user-authentication-function
+- ベース: upstream/main (upstreamが存在する場合)
+
+実行コマンド相当:
+git checkout -b feat/user-authentication-function --no-track upstream/main
+```
+
+### **Issue #456 "ログインバグの修正"の場合**
+```
+判定結果:
+- タイプ: fix (「バグ」「修正」から判定)
+- 説明: login-bug-fix
+- ブランチ名: fix/login-bug-fix
+- ベース: origin/master (upstreamが存在しない場合)
+
+実行コマンド相当:
+git checkout -b fix/login-bug-fix --no-track origin/master
+```
+
+## 手動ブランチ作成が必要な場合
+
+Claude Codeを使用せず手動でブランチを作成する特殊ケース向け：
+
+### 手動ブランチ作成の基本コマンド
 
 ```bash
 #!/bin/bash
+# manual_branch_creation.sh - 手動ブランチ作成スクリプト
 
-# リモート情報の更新
-git fetch --all
+TYPE=${1:-"feat"}
+DESCRIPTION=${2:-"example-feature"}
 
-# upstreamが存在するかチェック
+if [ "$DESCRIPTION" = "example-feature" ]; then
+    echo "Usage: $0 <type> <description>"
+    echo "Types: feat, fix, docs, refactor, test, style, perf"
+    echo "Example: $0 feat user-authentication"
+    exit 1
+fi
+
+# リモート判定
 if git remote get-url upstream >/dev/null 2>&1; then
     REMOTE="upstream"
     echo "✅ upstream remote detected"
@@ -53,72 +110,58 @@ else
     echo "📍 Using origin remote"
 fi
 
-# メインブランチを自動判定
+# メインブランチ判定
 MAIN_BRANCH=$(git remote show $REMOTE | grep "HEAD branch" | cut -d' ' -f5)
 echo "🌟 Main branch: $REMOTE/$MAIN_BRANCH"
 
-# ブランチタイプの選択
-echo "変更タイプを選択してください:"
-echo "1) feat - 新機能"
-echo "2) fix - バグ修正"
-echo "3) docs - ドキュメント"
-echo "4) refactor - リファクタリング"
-echo "5) test - テスト"
-echo "6) style - スタイル修正"
-echo "7) perf - パフォーマンス改善"
-read -r type_choice
-
-case $type_choice in
-    1) TYPE="feat";;
-    2) TYPE="fix";;
-    3) TYPE="docs";;
-    4) TYPE="refactor";;
-    5) TYPE="test";;
-    6) TYPE="style";;
-    7) TYPE="perf";;
-    *) echo "Type manually:"; read -r TYPE;;
-esac
-
-# ブランチ説明の入力
-echo "Enter branch description (e.g., user-authentication):"
-read DESCRIPTION
-
-# ブランチ名生成
+# ブランチ作成
 BRANCH_NAME="$TYPE/$DESCRIPTION"
-
-# ブランチ作成と切り替え
+git fetch --all
 git checkout -b $BRANCH_NAME --no-track $REMOTE/$MAIN_BRANCH
-echo "🚀 Created and switched to: $BRANCH_NAME (based on $REMOTE/$MAIN_BRANCH)"
 
-# 現在のブランチ状態を確認
+echo "🚀 Created and switched to: $BRANCH_NAME (based on $REMOTE/$MAIN_BRANCH)"
 git status
 ```
 
+### 使用場面
+- Issue以外からのブランチ作成が必要な場合
+- 特殊な命名規則が必要な場合
+- 複数のブランチを連続して作成する場合
+
 ## 注意事項
 
-- **upstream優先**: フォークされたリポジトリでは、必ずupstreamから最新を取得する
-- **no-track設定**: 作業ブランチは意図的に追跡しない設定で作成
-- **命名規則**: `<type>/<description>` 形式（Conventional Commits準拠）
-- **定期同期**: 長期間の作業では定期的にメインブランチと同期
+### **upstream優先の理由**
+- フォークされたリポジトリでの最新情報取得
+- 本家リポジトリとの同期維持
+- 競合の早期発見・解決
+
+### **no-track設定の理由**
+- 作業ブランチの独立性確保
+- プッシュ時の明示的な設定必要
+- 意図しないプッシュの防止
+
+### **命名規則の統一**
+- プロジェクト全体での一貫性
+- 自動化ツールでの解析容易性
+- チームメンバーの理解促進
+
+### **メインブランチ判定の重要性**
+- main/masterの違いへの対応
+- プロジェクト固有設定への自動適応
+- 手動設定の不要化
 
 ## トラブルシューティング
 
-### リモートが見つからない場合
+### **リモートが見つからない場合**
+- `git remote -v` でリモート一覧確認
+- 必要に応じて `git remote add upstream <URL>` でupstream追加
 
-```bash
-# リモート一覧確認
-git remote -v
+### **メインブランチ判定エラーの場合**
+- `git branch -r` でリモートブランチ確認
+- 明示的にブランチ指定: `git checkout -b feature/my-feature --no-track upstream/main`
 
-# upstream追加
-git remote add upstream https://github.com/original-owner/repo.git
-```
+### **ブランチ名重複の場合**
+- 既存ブランチ名に日時追加: `feature/my-feature-20250616`
+- より具体的な説明に変更: `feature/user-authentication-v2`
 
-### メインブランチ判定エラーの場合
-
-```bash
-# 手動でメインブランチを確認
-git branch -r
-
-# 明示的にブランチ指定
-git checkout -b feature/my-feature --no-track upstream/main
-```
+この自動化により、Issue対応開始時に適切なブランチが自動作成され、一貫した命名規則が維持されます。
