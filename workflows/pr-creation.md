@@ -1,4 +1,4 @@
-# プルリクエスト作成指針
+# プルリクエスト作成・更新指針
 
 ## 基本原則
 
@@ -7,523 +7,183 @@
 - **Conventional Commits**: タイトルはマージ時のコミットメッセージとして適切な形式
 - **継続的更新**: PR本文は実装内容の変更に応じて適宜更新
 
-## PR作成時の必須要素
+## Claude Codeによる自動PR作成
 
-### 1. **タイトル設定**
+### **基本フロー**
+Claude Codeが以下を自動実行：
+1. Conventional Commits形式のタイトル生成（Issue内容から判定）
+2. 日本語でのPR本文作成（概要、変更内容、テスト内容、チェックリスト）
+3. Issue自動クローズ設定（Closes #nn）
+4. PR作成とURL返却
 
-Conventional Commits形式でタイトルを設定：
+### **タイトル生成ルール**
+Issue内容から以下の形式で自動生成：
+- **feat**: 新機能追加
+- **fix**: バグ修正
+- **docs**: ドキュメント変更
+- **refactor**: リファクタリング
+- **test**: テスト追加・修正
+- **style**: コードスタイル修正
+- **perf**: パフォーマンス改善
 
-```
-# 形式
-<type>(<scope>): <description>
+例: `feat: ユーザー認証機能を追加`, `fix: パスワードバリデーションのバグを修正`
 
-# 例
-feat: ユーザー認証機能を追加
-fix: パスワードバリデーションのバグを修正
-docs: README.mdのセットアップ手順を更新
-refactor: API通信処理をリファクタリング
-test: ユーザー登録のテストケースを追加
-style: ESLintルール違反を修正
-perf: データベースクエリのパフォーマンスを改善
-```
-
-### 2. **Issue連携キーワード**
-
-PR本文に以下のキーワードを含めて、マージ時の自動クローズを設定：
-
-```markdown
-# 単一Issue
-Closes #123
-
-# 複数Issue
-Closes #123
-Closes #456
-
-# その他のキーワード
-Fixes #123        # バグ修正
-Resolves #123     # 課題解決
-Closes #123       # 一般的なクローズ
-```
-
-### 3. **PR本文構造（日本語）**
-
+### **PR本文構造**
 ```markdown
 ## 概要
-この変更の目的と背景を日本語で説明
+Issue #nn の対応: [Issue内容の要約]
 
 ## 変更内容
-- 追加した機能や修正した内容
-- 影響範囲の説明
-- 技術的な詳細
+- [実装された機能・修正内容]
+- [影響範囲の説明]
+- [技術的な詳細]
 
 ## テスト内容
-- 実施したテストの内容
-- 確認した動作
-- テストケースの追加有無
-
-## チェックリスト
-- [ ] ローカルでlint/testが通ることを確認
-- [ ] 既存機能に影響がないことを確認
-- [ ] ドキュメントの更新（必要に応じて）
-
-Closes #123
-```
-
-## ghコマンドでのPR作成
-
-### 1. **基本的なPR作成**
-
-```bash
-# Conventional Commits形式のタイトルで作成
-gh pr create \
-  --title "feat: ユーザー認証機能を追加" \
-  --body "$(cat <<'EOF'
-## 概要
-ユーザーがログイン・ログアウトできる認証機能を実装しました。
-
-## 変更内容
-- JWT認証の実装
-- ログイン・ログアウトAPI
-- 認証ミドルウェアの追加
-- フロントエンドの認証フォーム
-
-## テスト内容
-- 単体テスト: 認証ロジック
-- 統合テスト: APIエンドポイント
-- E2Eテスト: ログインフロー
+- [実施したテストの内容]
+- [確認した動作]
+- [新規テストの追加]
 
 ## チェックリスト
 - [x] ローカルでlint/testが通ることを確認
 - [x] 既存機能に影響がないことを確認
-- [x] APIドキュメントを更新
+- [x] Issue要件を満たしていることを確認
 
-Closes #42
-EOF
-)"
-```
-
-### 2. **複数Issue対応の場合**
-
-```bash
-gh pr create \
-  --title "fix: ユーザー管理の複数バグを修正" \
-  --body "$(cat <<'EOF'
-## 概要
-ユーザー管理機能で報告されていた複数のバグを修正しました。
-
-## 変更内容
-- パスワードバリデーションロジックの修正
-- ユーザー削除時のエラーハンドリング改善
-- プロファイル更新時の型チェック強化
-
-## テスト内容
-- 各バグケースの回帰テスト
-- 関連機能の動作確認
-
-Closes #123
-Closes #124
-Closes #125
-EOF
-)"
-```
-
-### 3. **作業中PR（Draft）の作成**
-
-```bash
-gh pr create \
-  --draft \
-  --title "feat: データ可視化機能を実装（WIP）" \
-  --body "$(cat <<'EOF'
-## 概要
-データの可視化機能を実装中です。
-
-## 変更内容（予定）
-- [ ] Chart.jsの統合
-- [ ] データAPIの実装
-- [ ] ダッシュボードUI
-
-## 進捗
-- [x] 基本的なチャート表示
-- [ ] データフィルタリング
-- [ ] レスポンシブ対応
-
-関連 #78
-EOF
-)"
-```
-
-## Conventional Commits タイプ一覧
-
-### 1. **主要タイプ**
-- **feat**: 新機能追加
-- **fix**: バグ修正
-- **docs**: ドキュメント変更
-- **style**: コードスタイル修正（機能変更なし）
-- **refactor**: リファクタリング（機能変更なし）
-- **test**: テスト追加・修正
-- **chore**: ビルド・設定変更
-
-### 2. **追加タイプ**
-- **perf**: パフォーマンス改善
-- **ci**: CI/CD設定変更
-- **build**: ビルドシステム変更
-- **revert**: 変更の取り消し
-
-### 3. **スコープ例**
-```
-feat(auth): ログイン機能を追加
-fix(api): ユーザー取得APIのエラーを修正
-docs(readme): インストール手順を更新
-test(user): ユーザー作成のテストを追加
-```
-
-## 自動化スクリプト例
-
-### 1. **PR作成ヘルパースクリプト**
-
-```bash
-#!/bin/bash
-# create_pr.sh
-
-echo "🚀 PR作成ヘルパー"
-
-# Issue番号の入力
-echo "関連するIssue番号を入力してください（複数可、スペース区切り）:"
-read -r issues
-
-# PRタイプの選択
-echo "変更タイプを選択してください:"
-echo "1) feat - 新機能"
-echo "2) fix - バグ修正"
-echo "3) docs - ドキュメント"
-echo "4) refactor - リファクタリング"
-echo "5) その他"
-read -r type_choice
-
-case $type_choice in
-    1) TYPE="feat";;
-    2) TYPE="fix";;
-    3) TYPE="docs";;
-    4) TYPE="refactor";;
-    5) echo "タイプを入力してください:"; read -r TYPE;;
-esac
-
-# 概要の入力
-echo "変更の概要を入力してください:"
-read -r description
-
-# タイトル生成
-TITLE="$TYPE: $description"
-
-# Issue連携の生成
-CLOSES_SECTION=""
-if [ -n "$issues" ]; then
-    for issue in $issues; do
-        CLOSES_SECTION="$CLOSES_SECTION\nCloses #$issue"
-    done
-fi
-
-# PR本文テンプレート生成
-BODY="## 概要
-$description
-
-## 変更内容
-- 
-
-## テスト内容
-- 
-
-## チェックリスト
-- [ ] ローカルでlint/testが通ることを確認
-- [ ] 既存機能に影響がないことを確認
-- [ ] ドキュメントの更新（必要に応じて）
-$CLOSES_SECTION"
-
-# PR作成
-echo "📝 以下の内容でPRを作成します:"
-echo "タイトル: $TITLE"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-gh pr create --title "$TITLE" --body "$BODY"
-
-echo "✅ PR作成完了！"
-```
-
-### 2. **Issue確認付きPR作成**
-
-```bash
-#!/bin/bash
-# create_pr_with_issue_check.sh
-
-# 現在のブランチから関連Issueを推測
-BRANCH_NAME=$(git branch --show-current)
-if [[ $BRANCH_NAME =~ issue-([0-9]+) ]]; then
-    ISSUE_NUM="${BASH_REMATCH[1]}"
-    echo "ブランチ名から Issue #$ISSUE_NUM を検出しました"
-    
-    # Issueの存在確認
-    if gh issue view "$ISSUE_NUM" >/dev/null 2>&1; then
-        echo "✅ Issue #$ISSUE_NUM 確認完了"
-        ISSUE_TITLE=$(gh issue view "$ISSUE_NUM" --json title -q '.title')
-        echo "Issue: $ISSUE_TITLE"
-        
-        # PR作成
-        gh pr create \
-            --title "fix: $ISSUE_TITLE" \
-            --body "$(cat <<EOF
-## 概要
-Issue #$ISSUE_NUM の対応
-
-## 変更内容
-- 
-
-## テスト内容
-- 
-
-Closes #$ISSUE_NUM
-EOF
-)"
-    else
-        echo "❌ Issue #$ISSUE_NUM が見つかりません"
-        exit 1
-    fi
-else
-    echo "ブランチ名からIssue番号を検出できませんでした"
-    echo "手動でPR作成を続行してください"
-fi
+Closes #nn
 ```
 
 ## PR本文・タイトルの継続的更新
 
-### 1. **更新が必要なタイミング**
+### **Claude Codeによる自動更新**
+以下のタイミングで自動更新：
+- 新しいコミット追加時
+- レビュー指摘対応時
+- テスト結果に応じた修正時
+- スコープ変更時
+- 設計変更時
 
-- **新しいコミット追加時**: 実装内容の変更を反映
-- **レビュー指摘対応時**: 修正内容を本文に追記
-- **テスト結果に応じた修正時**: テスト内容・結果の更新
-- **スコープ変更時**: 変更範囲の拡大・縮小の反映
-- **設計変更時**: アプローチ変更を概要に反映
+### **更新内容**
+Claude Codeが以下を自動反映：
+- 新しい変更内容の追記
+- レビュー対応履歴の記録
+- テスト内容・結果の更新
+- 更新履歴の自動追加
 
-### 2. **PR本文の更新方法**
-
-```bash
-# PR本文の更新
-gh pr edit {PR_NUMBER} --body "$(cat <<'EOF'
-## 概要
-[更新された概要]
-
-## 変更内容
-- [新しい変更内容を追記]
-- [既存の変更内容を修正]
-
-## テスト内容
-- [追加されたテスト]
-- [修正されたテスト結果]
-
-## レビュー対応履歴
-- レビュー指摘事項A: 対応完了
-- レビュー指摘事項B: 設計変更で対応
-
-## チェックリスト
-- [x] ローカルでlint/testが通ることを確認
-- [x] 既存機能に影響がないことを確認
-- [x] レビュー指摘事項への対応完了
-
-Closes #123
-EOF
-)"
-```
-
-### 3. **PRタイトルの更新**
-
-```bash
-# スコープが大幅に変更された場合
-gh pr edit {PR_NUMBER} --title "feat: ユーザー認証とアクセス制御機能を追加"
-
-# 修正レベルの変更の場合
-gh pr edit {PR_NUMBER} --title "fix: ユーザー認証の重大なセキュリティ問題を修正"
-```
-
-### 4. **更新タイミングの判断基準**
+### **更新タイミングの判断基準**
 
 #### **必須更新ケース**
-- [ ] 実装方針の大幅変更
-- [ ] 新しい機能・修正の追加
-- [ ] 重要なバグ修正の追加
-- [ ] セキュリティ関連の変更
-- [ ] パフォーマンス影響の変更
+- 実装方針の大幅変更
+- 新しい機能・修正の追加
+- 重要なバグ修正の追加
+- セキュリティ関連の変更
+- パフォーマンス影響の変更
 
 #### **推奨更新ケース**
-- [ ] レビュー指摘事項の対応
-- [ ] テストケースの追加・修正
-- [ ] ドキュメント更新の追加
-- [ ] リファクタリングの追加
-- [ ] コードスタイル修正
+- レビュー指摘事項の対応
+- テストケースの追加・修正
+- ドキュメント更新の追加
+- リファクタリングの追加
 
 #### **更新不要ケース**
-- [ ] 軽微なタイポ修正
-- [ ] コメントの追加・修正のみ
-- [ ] インデント・フォーマット修正のみ
-- [ ] 変数名の軽微な変更
+- 軽微なタイポ修正
+- コメントの追加・修正のみ
+- インデント・フォーマット修正のみ
 
-### 5. **効率的な更新戦略**
+### **効率的な更新戦略**
+- **段階的更新**: 初期→レビュー後→追加実装後→最終整理
+- **履歴の保持**: 変更日時と理由の記録
+- **実装説明の強化**: 当初の実装から最終実装への経緯
 
-#### **段階的更新**
-```bash
-# 初期PR作成時: 基本的な内容
-# レビュー後: 指摘事項と対応を追記
-# 追加実装後: 新機能・修正内容を追記
-# 最終レビュー後: 完成版として整理
-```
+## Issue連携・管理
 
-#### **履歴の保持**
+### **自動クローズキーワード**
+Claude Codeが以下を自動設定：
+- `Closes #123` - 一般的なクローズ
+- `Fixes #123` - バグ修正
+- `Resolves #123` - 課題解決
+
+### **複数Issue対応**
 ```markdown
-## 変更履歴
-- 2025-01-15: 初期実装完了
-- 2025-01-16: レビュー指摘事項A, B対応
-- 2025-01-17: パフォーマンス改善追加
-- 2025-01-18: セキュリティ修正追加
+Closes #123
+Closes #124
+Closes #125
 ```
 
-#### **実装の説明強化**
-```markdown
-## 技術的な詳細
-### 当初の実装
-- JWT認証のみ
+### **Draft PR対応**
+作業中・段階的実装の場合：
+- Draft状態でPR作成
+- 進捗状況をチェックリスト形式で管理
+- 完了時にReady for Reviewに変更
 
-### レビュー後の改善
-- JWT + リフレッシュトークン方式
-- セッション管理の強化
-- CSRF対策の追加
+## 手動PR作成が必要な場合
 
-### 最終実装
-- 多要素認証対応
-- ロールベースアクセス制御
-- 監査ログ機能
-```
+Claude Codeを使用せず手動でPR作成を行う特殊ケース向け：
 
-## 自動化スクリプト（更新対応版）
-
-### 1. **PR本文自動更新スクリプト**
+### 手動PR作成の基本コマンド
 
 ```bash
 #!/bin/bash
-# update_pr_body.sh - PR本文自動更新
+# manual_pr_creation.sh - 手動PR作成スクリプト
 
-PR_NUMBER=$(gh pr view --json number -q '.number' 2>/dev/null)
-if [ -z "$PR_NUMBER" ]; then
-    echo "❌ 現在のブランチにPRが見つかりません"
+ISSUE_NUMBER=$1
+TYPE=${2:-"feat"}
+TITLE=${3:-"Issue対応"}
+
+if [ -z "$ISSUE_NUMBER" ]; then
+    echo "Usage: $0 <issue_number> [type] [title]"
+    echo "Example: $0 123 feat '新機能追加'"
     exit 1
 fi
 
-echo "📝 PR #$PR_NUMBER の本文を更新します"
+# Issue情報取得
+ISSUE_TITLE=$(gh issue view $ISSUE_NUMBER --json title -q '.title')
 
-# 現在のPR情報を取得
-CURRENT_TITLE=$(gh pr view $PR_NUMBER --json title -q '.title')
-CURRENT_BODY=$(gh pr view $PR_NUMBER --json body -q '.body')
+# PR作成
+gh pr create \
+  --title "$TYPE: $TITLE" \
+  --body "## 概要
+Issue #$ISSUE_NUMBER の対応
 
-echo "現在のタイトル: $CURRENT_TITLE"
-echo "現在の本文の一部: $(echo "$CURRENT_BODY" | head -3)"
-echo ""
+$ISSUE_TITLE
 
-# 更新理由の入力
-echo "更新理由を入力してください:"
-echo "1) レビュー指摘事項の対応"
-echo "2) 新機能・修正の追加"
-echo "3) テスト内容の更新"
-echo "4) 設計変更"
-echo "5) その他"
-read -r reason_choice
+## 変更内容
+- 手動で記載してください
 
-case $reason_choice in
-    1) REASON="レビュー指摘事項の対応";;
-    2) REASON="新機能・修正の追加";;
-    3) REASON="テスト内容の更新";;
-    4) REASON="設計変更";;
-    5) echo "理由を入力してください:"; read -r REASON;;
-esac
+## テスト内容
+- 手動で記載してください
 
-# 変更内容の入力
-echo "追加する変更内容を入力してください:"
-read -r new_changes
+## チェックリスト
+- [ ] ローカルでlint/testが通ることを確認
+- [ ] 既存機能に影響がないことを確認
+- [ ] Issue要件を満たしていることを確認
 
-# 既存の本文に追記
-UPDATED_BODY="$CURRENT_BODY
+Closes #$ISSUE_NUMBER"
 
-## 更新履歴
-$(date '+%Y-%m-%d'): $REASON
-- $new_changes"
-
-# PR本文更新
-gh pr edit $PR_NUMBER --body "$UPDATED_BODY"
-
-echo "✅ PR本文を更新しました"
+echo "✅ PR作成完了"
+echo "PR本文は必要に応じて手動で更新してください"
 ```
 
-### 2. **コミット時PR自動更新スクリプト**
-
-```bash
-#!/bin/bash
-# auto_update_pr_on_commit.sh - コミット時PR自動更新
-
-# Gitフック（post-commit）として使用
-# .git/hooks/post-commit に配置
-
-PR_NUMBER=$(gh pr view --json number -q '.number' 2>/dev/null)
-if [ -n "$PR_NUMBER" ]; then
-    echo "📝 PR #$PR_NUMBER の本文を自動更新中..."
-    
-    # 最新のコミットメッセージを取得
-    LATEST_COMMIT=$(git log -1 --pretty=format:"%s")
-    
-    # 現在のPR本文を取得
-    CURRENT_BODY=$(gh pr view $PR_NUMBER --json body -q '.body')
-    
-    # 更新履歴セクションがあるかチェック
-    if [[ "$CURRENT_BODY" == *"## 更新履歴"* ]]; then
-        # 既存の更新履歴に追記
-        UPDATED_BODY=$(echo "$CURRENT_BODY" | sed "/## 更新履歴/a\\
-$(date '+%Y-%m-%d'): $LATEST_COMMIT")
-    else
-        # 新しく更新履歴セクションを追加
-        UPDATED_BODY="$CURRENT_BODY
-
-## 更新履歴
-$(date '+%Y-%m-%d'): $LATEST_COMMIT"
-    fi
-    
-    # PR本文更新
-    gh pr edit $PR_NUMBER --body "$UPDATED_BODY"
-    
-    echo "✅ PR本文を自動更新しました"
-fi
-```
+### 使用場面
+- 複雑なPR本文構成が必要な場合
+- 特殊なテンプレート・フォーマットが必要な場合
+- 段階的なPR作成プロセスが必要な場合
 
 ## 注意事項
 
-### 1. **タイトルの重要性**
+### **タイトルの重要性**
 - マージ時のコミットメッセージになる
 - プロジェクト履歴の可読性に影響
 - 自動化ツールでの解析に使用
-- **重要**: スコープが大幅に変更された場合は必ずタイトルも更新
+- スコープが大幅に変更された場合は必ずタイトルも更新
 
-### 2. **Issue連携の効果**
+### **Issue連携の効果**
 - Issue自動クローズ
 - 変更履歴の追跡性向上
 - プロジェクト管理の効率化
 
-### 3. **日本語使用の理由**
-- チーム内コミュニケーションの統一
-- レビュー効率の向上
-- 意図の正確な伝達
-
-### 4. **品質確保**
-- PR作成前の必須チェック項目確認
-- CI通過の確認
-- コンフリクト解決の完了
-- **追加**: PR本文の実装内容との整合性確認
-
-### 5. **継続的更新の重要性**
+### **継続的更新の重要性**
 - レビュアーが最新の実装内容を正確に把握
 - 将来の参照時に実際の実装と一致した情報
 - プロジェクト管理の精度向上
 - ドキュメントとしての価値向上
+
+この自動化により、Issue対応完了時に適切なPRが自動作成され、実装の変更に応じて継続的に更新されます。
