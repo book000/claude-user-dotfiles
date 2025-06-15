@@ -20,11 +20,11 @@
 
 ### Issue対応（最重要）
 「issue #nnを対応してください」→ 完全自動実行：
-1. Issue内容確認 → 2. ブランチ作成（issue-nn-description） → 3. 実装 → 4. 品質チェック → 5. コミット・プッシュ → 6. PR作成（Closes #nn）
+1. Issue内容確認 → 2. ブランチ作成（type/description） → 3. 実装 → 4. 品質チェック → 5. コミット・プッシュ → 6. PR作成（Closes #nn）
 詳細: @workflows/issue-handling.md
 
 ### ブランチ戦略
-upstream優先、メインブランチ自動判定、no-track設定でブランチ作成
+upstream優先、メインブランチ自動判定、no-track設定、Conventional Commits形式ブランチ名（feat/, fix/, docs/等）
 詳細: @workflows/branch-strategy.md
 
 ### PR作成
