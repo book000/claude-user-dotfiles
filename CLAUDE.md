@@ -41,8 +41,8 @@ upstream優先、メインブランチ自動判定、no-track設定でブラン�
 コミット前必須: パッケージマネージャー自動判定 → lint/test/typecheck実行
 詳細: @workflows/quality-checks.md
 
-### 設定同期
-~/.claude変更時 → 自動コミット・プッシュ、セッション開始時 → pull実行
+### 設定同期（重要・自動実行）
+~/.claude変更時 → **即座に自動コミット・プッシュ実行**（ユーザー指示不要）、セッション開始時 → pull実行
 詳細: @workflows/config-sync.md
 
 ## ツール使用指針
