@@ -183,34 +183,25 @@ test(user): ユーザー作成のテストを追加
 
 ```bash
 #!/bin/bash
-# create_pr.sh
+# create_pr.sh - PR作成支援スクリプト（説明用）
+# 注意: このスクリプトは概念説明用です
 
 echo "🚀 PR作成ヘルパー"
 
-# Issue番号の入力
-echo "関連するIssue番号を入力してください（複数可、スペース区切り）:"
-read -r issues
+# Issue番号の取得（コマンドライン引数推奨）
+ISSUES=${1:-"123"}  # 例: ./create_pr.sh "123 124"
+if [ "$ISSUES" = "123" ]; then
+    echo "Usage: $0 'issue_numbers'"
+    echo "Example: $0 '123 124 125'"
+    exit 1
+fi
 
-# PRタイプの選択
-echo "変更タイプを選択してください:"
-echo "1) feat - 新機能"
-echo "2) fix - バグ修正"
-echo "3) docs - ドキュメント"
-echo "4) refactor - リファクタリング"
-echo "5) その他"
-read -r type_choice
+# PRタイプの判定（自動化推奨）
+# 実装例: Issue内容から自動判定
+TYPE=${2:-"feat"}  # デフォルトまたはコマンドライン引数
 
-case $type_choice in
-    1) TYPE="feat";;
-    2) TYPE="fix";;
-    3) TYPE="docs";;
-    4) TYPE="refactor";;
-    5) echo "タイプを入力してください:"; read -r TYPE;;
-esac
-
-# 概要の入力
-echo "変更の概要を入力してください:"
-read -r description
+# 概要の生成（Issue情報から自動生成）
+DESCRIPTION=${3:-"Issue対応"}  # 実際にはIssueタイトルを使用
 
 # タイトル生成
 TITLE="$TYPE: $description"
@@ -425,26 +416,19 @@ echo "現在のタイトル: $CURRENT_TITLE"
 echo "現在の本文の一部: $(echo "$CURRENT_BODY" | head -3)"
 echo ""
 
-# 更新理由の入力
-echo "更新理由を入力してください:"
-echo "1) レビュー指摘事項の対応"
-echo "2) 新機能・修正の追加"
-echo "3) テスト内容の更新"
-echo "4) 設計変更"
-echo "5) その他"
-read -r reason_choice
+# 更新理由の判定（自動化推奨）
+REASON_TYPE=${1:-"1"}  # コマンドライン引数または自動判定
 
-case $reason_choice in
+case $REASON_TYPE in
     1) REASON="レビュー指摘事項の対応";;
     2) REASON="新機能・修正の追加";;
     3) REASON="テスト内容の更新";;
     4) REASON="設計変更";;
-    5) echo "理由を入力してください:"; read -r REASON;;
+    *) REASON="その他の変更";;
 esac
 
-# 変更内容の入力
-echo "追加する変更内容を入力してください:"
-read -r new_changes
+# 変更内容の取得（コミットメッセージから自動生成推奨）
+NEW_CHANGES=${2:-"最新のコミット内容を反映"}  # 実際にはgit logから取得
 
 # 既存の本文に追記
 UPDATED_BODY="$CURRENT_BODY

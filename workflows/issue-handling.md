@@ -490,20 +490,14 @@ else
     PM="npm"
 fi
 
-# 実装完了を待つ関数
-wait_for_implementation() {
-    echo "実装が完了したら 'y' を入力してください:"
-    read -r response
-    if [ "$response" = "y" ]; then
-        return 0
-    else
-        echo "実装を続行してください..."
-        wait_for_implementation
-    fi
-}
-
-# 実装完了待ち
-wait_for_implementation
+# 実装完了確認（スクリプト説明用 - Claude実行時は自動スキップ）
+# 注意: このセクションは手動実行時のみ有効
+if [ "${CLAUDE_AUTO_MODE:-true}" != "true" ]; then
+    echo "実装が完了したら Enter キーを押してください:"
+    read -r
+else
+    echo "🤖 Claude Code自動モード: 実装完了を想定して続行"
+fi
 
 # 4. 品質チェック
 echo "🔍 品質チェックを実行中..."

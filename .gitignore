@@ -26,6 +26,12 @@ debug_*.sh
 *.bak
 *.backup
 
+# 自動化スクリプト実行ファイル（説明用は除く）
+create_pr.sh
+update_pr_body.sh
+handle_issue.sh
+auto_*.sh
+
 # OS固有ファイル
 .DS_Store
 .DS_Store?

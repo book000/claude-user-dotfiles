@@ -57,31 +57,17 @@ fi
 MAIN_BRANCH=$(git remote show $REMOTE | grep "HEAD branch" | cut -d' ' -f5)
 echo "🌟 Main branch: $REMOTE/$MAIN_BRANCH"
 
-# ブランチタイプの選択
-echo "変更タイプを選択してください:"
-echo "1) feat - 新機能"
-echo "2) fix - バグ修正"
-echo "3) docs - ドキュメント"
-echo "4) refactor - リファクタリング"
-echo "5) test - テスト"
-echo "6) style - スタイル修正"
-echo "7) perf - パフォーマンス改善"
-read -r type_choice
+# ブランチタイプの判定（自動化推奨）
+# 実際の使用では、Issue内容から自動判定することを推奨
+TYPE=${1:-"feat"}  # コマンドライン引数またはデフォルト
 
-case $type_choice in
-    1) TYPE="feat";;
-    2) TYPE="fix";;
-    3) TYPE="docs";;
-    4) TYPE="refactor";;
-    5) TYPE="test";;
-    6) TYPE="style";;
-    7) TYPE="perf";;
-    *) echo "Type manually:"; read -r TYPE;;
-esac
+# 使用例（説明用 - 実行時は引数で指定）:
+# $0 feat user-authentication
+# $0 fix login-validation
+# $0 docs api-documentation
 
-# ブランチ説明の入力
-echo "Enter branch description (e.g., user-authentication):"
-read DESCRIPTION
+# ブランチ説明の取得（Issue情報から自動生成推奨）
+DESCRIPTION=${2:-"example-feature"}  # 実際にはIssueタイトルから生成
 
 # ブランチ名生成
 BRANCH_NAME="$TYPE/$DESCRIPTION"
