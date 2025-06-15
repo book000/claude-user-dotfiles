@@ -1,4 +1,22 @@
-# レビュー対応（Copilot + Human）
+# レビュー対応（Copilot + Human）完全タスク管理版
+
+## 必須：開始時TodoWrite実行
+
+「レビューに対応してください」指示受信後、**最初に**以下をTodoWriteで作成：
+
+```json
+[
+  {"id": "1", "content": "レビュー情報収集（PR・コメント確認）", "status": "pending", "priority": "high"},
+  {"id": "2", "content": "Copilotコメント対応（適切/不適切判定・実装）", "status": "pending", "priority": "medium"},
+  {"id": "3", "content": "book000コメント対応（全指摘事項への実装）", "status": "pending", "priority": "high"},
+  {"id": "4", "content": "品質チェック実行（lint/test/typecheck）", "status": "pending", "priority": "medium"},
+  {"id": "5", "content": "【重要】修正内容のコミット・プッシュ", "status": "pending", "priority": "high"},
+  {"id": "6", "content": "Review thread解決（GraphQL API）", "status": "pending", "priority": "medium"},
+  {"id": "7", "content": "完了報告コメント追加", "status": "pending", "priority": "low"}
+]
+```
+
+**重要**: 各手順完了時に即座にTodoWrite実行してstatusを"completed"に変更
 
 ## Copilotレビューの種類
 

@@ -31,11 +31,12 @@ upstream優先、メインブランチ自動判定、no-track設定、Convention
 タイトル: Conventional Commits形式、本文: 日本語、Issue連携: Closes #nn、**継続的更新**: 実装変更時PR本文・タイトル適宜更新
 詳細: @workflows/pr-creation.md
 
-### レビュー対応
-「レビューに対応してください」→ PRコメント・サジェストコメント両方に対応 → **必須：コミット・プッシュ**
-- Copilot: gh apiでサジェスト含む全取得、不適切なコメントは簡潔にReply→Resolve conversation
-- Human (book000): 全コメント確認・対応・Resolve conversation（GraphQL APIでreview threadをresolve）
-- **最終確認**: 修正内容のコミット・プッシュ実行必須
+### レビュー対応（完全タスク管理）
+「レビューに対応してください」→ **即座にTodoWrite実行**、全手順をタスク化して逐次完了チェック
+1. レビュー情報収集 → 2. 各コメント対応実装 → 3. 品質チェック → 4. **コミット・プッシュ** → 5. Resolve conversation → 6. 完了報告
+- Copilot: gh apiでサジェスト含む全取得、不適切なコメントは簡潔にReply→Resolve
+- Human (book000): 全コメント確認・対応・GraphQL APIでresolve
+- **重要**: 各手順完了時に即座にTodo完了マーク、漏れ防止徹底
 詳細: @workflows/copilot-review.md
 
 ### 品質チェック
