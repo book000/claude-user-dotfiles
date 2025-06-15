@@ -195,8 +195,8 @@ gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments | jq -r '.[] | select(.us
 
 Copilotのコメントが不適切と判断した場合：
 
-1. **対応しない理由を返信**
-2. **Resolve commentで解決**
+1. **レビューコメントにReply（返信）**
+2. **Resolve conversation（会話解決）**
 
 ### 不適切なコメント例と対応
 
@@ -204,70 +204,54 @@ Copilotのコメントが不適切と判断した場合：
 ```
 Copilot: "この処理は非効率です。配列操作をよりパフォーマンスの良い方法に変更してください"
 
-返信: "このプロジェクトでは可読性を優先しており、データ量も小規模のため現在の実装で十分です。パフォーマンス要件を満たしているため変更しません。"
-→ Resolve comment
+返信: "可読性優先のため変更しません。 (Claude Code対応)"
+→ Resolve conversation
 ```
 
 #### **例2: 既存設計思想と矛盾**
 ```
 Copilot: "この関数は複数の責任を持っています。単一責任原則に従って分割してください"
 
-返信: "この関数は意図的に複数の密接に関連する処理をまとめており、プロジェクトのアーキテクチャ方針に従った設計です。分割することで逆に複雑性が増すため変更しません。"
-→ Resolve comment
+返信: "アーキテクチャ方針に従った設計のため変更しません。 (Claude Code対応)"
+→ Resolve conversation
 ```
 
 #### **例3: 技術的制約を無視**
 ```
 Copilot: "最新のES2023機能を使用してください"
 
-返信: "このプロジェクトはNode.js 16をサポートする必要があり、ES2023機能は使用できません。互換性要件を満たすため現在の実装を維持します。"
-→ Resolve comment
+返信: "Node.js 16互換性要件のため変更しません。 (Claude Code対応)"
+→ Resolve conversation
 ```
 
 #### **例4: セキュリティ要件の誤解**
 ```
 Copilot: "このAPI呼び出しにはレート制限を追加してください"
 
-返信: "このAPIは内部システム専用で外部公開されておらず、レート制限は不要です。システム要件を満たしているため変更しません。"
-→ Resolve comment
+返信: "内部API専用のため不要です。 (Claude Code対応)"
+→ Resolve conversation
 ```
 
-### 返信テンプレート
+### 返信テンプレート（簡潔版）
 
 #### **基本テンプレート**
 ```
-ご指摘いただきありがとうございます。
-
-【対応しない理由】
-- [具体的な理由]
-
-【現在の実装を維持する根拠】
-- [プロジェクト要件/技術制約/設計方針]
-
-以上の理由により、現在の実装を維持します。
+[理由]のため変更しません。 (Claude Code対応)
 ```
 
-#### **プロジェクト固有事情**
+#### **具体例**
 ```
-ご指摘いただきありがとうございます。
+# プロジェクト固有事情
+"可読性優先のため変更しません。 (Claude Code対応)"
 
-このプロジェクトでは[特定の要件/制約]があるため、提案された変更は適用できません。
+# 技術的制約
+"Node.js 16互換性のため変更しません。 (Claude Code対応)"
 
-具体的には：
-- [理由1]
-- [理由2]
+# 設計方針
+"既存アーキテクチャに従うため変更しません。 (Claude Code対応)"
 
-現在の実装はプロジェクト要件を満たしているため、変更は行いません。
-```
-
-#### **技術的制約**
-```
-ご指摘いただきありがとうございます。
-
-技術的制約により提案された変更は実施できません：
-- [環境制約/互換性要件/パフォーマンス要件]
-
-代替案も検討しましたが、現在の実装が最適と判断しています。
+# システム要件
+"内部API専用のため不要です。 (Claude Code対応)"
 ```
 
 ### 判断基準
@@ -303,7 +287,7 @@ Copilot: "このAPI呼び出しにはレート制限を追加してください"
    - 根拠の明示
 
 4. **Resolve実行**
-   - 返信投稿後にResolve comment
+   - 返信投稿後にResolve conversation
    - 判断記録の保持
 
 ### 注意事項
@@ -319,5 +303,127 @@ Copilot: "このAPI呼び出しにはレート制限を追加してください"
 - チーム知識の共有
 - 将来の参考情報
 - 品質向上への貢献
+
+## GitHub API操作方法
+
+### レビューコメントへの返信（Reply）
+
+#### **REST API使用**
+```bash
+# レビューコメントに返信
+gh api -X POST repos/{owner}/{repo}/pulls/{pull_number}/comments \
+  -f body="[理由]のため変更しません。 (Claude Code対応)" \
+  -f in_reply_to={comment_id}
+```
+
+#### **重要事項**
+- `in_reply_to`パラメータに返信対象のコメントIDを指定
+- トップレベルのレビューコメントのみ返信可能（返信への返信は不可）
+- `comment_id`は返信対象のレビューコメントID
+
+### Resolve Conversation（会話解決）
+
+#### **GraphQL API使用**
+```bash
+# 会話を解決
+gh api graphql -f query='
+  mutation ResolveThread($threadId: ID!) {
+    resolveReviewThread(input: {threadId: $threadId}) {
+      thread {
+        id
+        isResolved
+        resolvedBy {
+          login
+        }
+      }
+    }
+  }
+' -F threadId="{thread_id}"
+```
+
+#### **スレッドID取得**
+```bash
+# PRのレビュースレッド一覧を取得
+gh api graphql -f query='
+  query GetPullRequestThreads($owner: String!, $repo: String!, $number: Int!) {
+    repository(owner: $owner, name: $repo) {
+      pullRequest(number: $number) {
+        reviewThreads(first: 100) {
+          nodes {
+            id
+            isResolved
+            path
+            line
+            comments(first: 1) {
+              nodes {
+                id
+                body
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+' -F owner="{owner}" -F repo="{repo}" -F number={pr_number}
+```
+
+### 完全な対応フロー例
+
+```bash
+#!/bin/bash
+# reply_and_resolve.sh - Copilot不適切コメント対応
+
+OWNER="book000"
+REPO="project-name"
+PR_NUMBER=123
+COMMENT_ID=456
+THREAD_ID="T_kwDOBhHyPc4A..."
+
+# 1. レビューコメントに返信
+echo "📝 レビューコメントに返信中..."
+gh api -X POST repos/$OWNER/$REPO/pulls/$PR_NUMBER/comments \
+  -f body="プロジェクト要件のため変更しません。 (Claude Code対応)" \
+  -f in_reply_to=$COMMENT_ID
+
+# 2. 会話を解決
+echo "✅ 会話を解決中..."
+gh api graphql -f query='
+  mutation ResolveThread($threadId: ID!) {
+    resolveReviewThread(input: {threadId: $threadId}) {
+      thread {
+        id
+        isResolved
+      }
+    }
+  }
+' -F threadId="$THREAD_ID"
+
+echo "🎉 Copilotコメント対応完了"
+```
+
+### 必要な権限
+
+#### **GraphQL API (resolveReviewThread)**
+- Repository Permissions > Contents: Read and Write
+- Repository Permissions > Pull Requests: Read and Write
+
+#### **REST API (コメント返信)**
+- Repository Permissions > Pull Requests: Write
+- Repository Permissions > Issues: Write (PRはIssueの一種のため)
+
+### トラブルシューティング
+
+#### **"Resource not accessible by integration" エラー**
+- Contents権限をRead and Writeに設定
+- Pull Requests権限のみでは不十分
+
+#### **"Review has already been submitted" エラー**
+- 提出済みレビューへの返信時は新しいレビューオブジェクトが作成される
+- GraphQL API使用時の正常な動作
+
+#### **スレッドIDが見つからない**
+- GraphQL queryでレビュースレッド一覧を取得
+- コメントIDとスレッドIDは異なるので注意
 
 この対応により、Copilotとの適切なコラボレーションを維持しながら、プロジェクト要件に合致した開発を継続できます。
