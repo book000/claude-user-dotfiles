@@ -27,8 +27,8 @@
 upstream優先、メインブランチ自動判定、no-track設定、Conventional Commits形式ブランチ名（feat/, fix/, docs/等）
 詳細: @workflows/branch-strategy.md
 
-### PR作成
-タイトル: Conventional Commits形式、本文: 日本語、Issue連携: Closes #nn
+### PR作成・更新
+タイトル: Conventional Commits形式、本文: 日本語、Issue連携: Closes #nn、**継続的更新**: 実装変更時PR本文・タイトル適宜更新
 詳細: @workflows/pr-creation.md
 
 ### レビュー対応
