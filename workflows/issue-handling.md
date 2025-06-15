@@ -31,11 +31,31 @@ fi
 
 MAIN_BRANCH=$(git remote show $REMOTE | grep "HEAD branch" | cut -d' ' -f5)
 
-# Issue対応ブランチの作成
+# Issue対応ブランチの作成（Conventional Commits形式）
 git fetch --all
-git checkout -b issue-{ISSUE_NUMBER}-{brief-description} --no-track $REMOTE/$MAIN_BRANCH
 
-# 例: git checkout -b issue-42-fix-login-validation --no-track upstream/main
+# Issueタイトルから適切なタイプを判定
+ISSUE_TITLE=$(gh issue view {ISSUE_NUMBER} --json title -q '.title')
+if [[ $ISSUE_TITLE =~ bug|fix|error|修正 ]]; then
+    TYPE="fix"
+elif [[ $ISSUE_TITLE =~ feature|add|implement|機能|追加 ]]; then
+    TYPE="feat"
+elif [[ $ISSUE_TITLE =~ doc|readme|ドキュメント ]]; then
+    TYPE="docs"
+elif [[ $ISSUE_TITLE =~ test|テスト ]]; then
+    TYPE="test"
+elif [[ $ISSUE_TITLE =~ refactor|リファクタ ]]; then
+    TYPE="refactor"
+else
+    TYPE="fix"  # デフォルト
+fi
+
+# 説明部分の生成
+DESCRIPTION=$(echo "$ISSUE_TITLE" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | tr '[:upper:]' '[:lower:]' | sed 's/^-\|-$//g' | cut -c1-30)
+
+git checkout -b $TYPE/$DESCRIPTION --no-track $REMOTE/$MAIN_BRANCH
+
+# 例: git checkout -b fix/login-validation --no-track upstream/main
 ```
 
 ### 3. **実装・修正実行**
@@ -185,12 +205,27 @@ fi
 MAIN_BRANCH=$(git remote show $REMOTE | grep "HEAD branch" | cut -d' ' -f5)
 git fetch --all
 
-# ブランチ名生成（タイトルから簡潔な説明を生成）
-BRANCH_DESC=$(echo "$ISSUE_TITLE" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | tr '[:upper:]' '[:lower:]' | sed 's/^-\|-$//g' | cut -c1-30)
-BRANCH_NAME="issue-$ISSUE_NUMBER-$BRANCH_DESC"
+# ブランチタイプ判定（Conventional Commits）
+if [[ $ISSUE_TITLE =~ bug|fix|error|修正 ]]; then
+    TYPE="fix"
+elif [[ $ISSUE_TITLE =~ feature|add|implement|機能|追加 ]]; then
+    TYPE="feat"
+elif [[ $ISSUE_TITLE =~ doc|readme|ドキュメント ]]; then
+    TYPE="docs"
+elif [[ $ISSUE_TITLE =~ test|テスト ]]; then
+    TYPE="test"
+elif [[ $ISSUE_TITLE =~ refactor|リファクタ ]]; then
+    TYPE="refactor"
+else
+    TYPE="fix"  # デフォルト
+fi
+
+# ブランチ説明生成
+DESCRIPTION=$(echo "$ISSUE_TITLE" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/--*/-/g' | tr '[:upper:]' '[:lower:]' | sed 's/^-\|-$//g' | cut -c1-30)
+BRANCH_NAME="$TYPE/$DESCRIPTION"
 
 git checkout -b $BRANCH_NAME --no-track $REMOTE/$MAIN_BRANCH
-echo "✅ ブランチ作成完了: $BRANCH_NAME"
+echo "✅ ブランチ作成完了: $BRANCH_NAME (Conventional Commits形式)"
 
 # 3. 実装フェーズ（ここでClaude Codeが実装を実行）
 echo "⚙️ Issue対応の実装を実行中..."
