@@ -41,6 +41,7 @@
 
 ### ブランチ戦略
 upstream優先、メインブランチ自動判定、no-track設定、Conventional Commits形式ブランチ名（feat/, fix/, docs/等）
+**ブランチ整理**: PR完了後、適宜`gh poi`でマージ済みローカルブランチを削除
 詳細: @workflows/branch-strategy.md
 
 ### PR作成・更新
