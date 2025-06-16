@@ -47,6 +47,19 @@ gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments
 gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/reviews/{REVIEW_ID}/comments
 ```
 
+### 効率化されたコマンド（オプション）
+
+```bash
+# 1. 未解決Copilotスレッドの一覧表示
+gh pr view $PR_NUMBER --json reviewThreads --jq '.reviewThreads[] | select(.isResolved == false and .comments[0].author.login == "github-copilot[bot]") | "Thread: \(.id) | \(.comments[0].body)"'
+
+# 2. CopilotコメントのスレッドIDのみ取得
+gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]" and .isResolved == false) | .id'
+
+# 3. Copilot行レベルコメントの取得
+gh api repos/{owner}/{repo}/pulls/{PR_NUMBER}/comments --jq '.[] | select(.user.login == "github-copilot[bot]") | "File: \(.path):\(.line) | \(.body)"'
+```
+
 ### 実用的なスクリプト例
 
 ```bash
@@ -342,7 +355,96 @@ gh api -X POST repos/{owner}/{repo}/pulls/{pull_number}/comments \
 
 ### Resolve Conversation（会話解決）
 
-#### **GraphQL API使用**
+#### **GraphQL API（基本）**
+```bash
+# 会話を解決（単一）
+gh api graphql -f query='
+mutation {
+  resolveReviewThread(input: {threadId: "THREAD_ID"}) {
+    thread {
+      id
+      isResolved
+    }
+  }
+}'
+
+# 複数会話の一括解決
+gh api graphql -f query='
+mutation {
+  resolveReviewThread(input: {threadId: "PRRT_kwDOGIpaB85SSRmV"}) {
+    thread {
+      id
+      isResolved
+    }
+  }
+}' && gh api graphql -f query='
+mutation {
+  resolveReviewThread(input: {threadId: "PRRT_kwDOGIpaB85SSRmW"}) {
+    thread {
+      id
+      isResolved
+    }
+  }
+}'
+```
+
+#### **効率化されたワンライナー（オプション）**
+```bash
+# 単一スレッドの解決
+gh api graphql -f query="mutation { resolveReviewThread(input: {threadId: \"$THREAD_ID\"}) { thread { id isResolved } } }"
+
+# 全てのCopilotスレッドを一括解決
+gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]" and .isResolved == false) | .id' | while read thread_id; do gh api graphql -f query="mutation { resolveReviewThread(input: {threadId: \"$thread_id\"}) { thread { id } } }"; done
+```
+
+#### **実用的なヘルパー関数（参考）**
+```bash
+# Copilotスレッド一括解決関数
+resolve_copilot_threads() {
+    local pr_number=$1
+    if [ -z "$pr_number" ]; then
+        echo "Usage: resolve_copilot_threads <PR_NUMBER>"
+        return 1
+    fi
+    
+    echo "🔍 未解決のCopilotスレッドを確認中..."
+    local thread_ids=$(gh pr view $pr_number --json reviewThreads --jq -r '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]" and .isResolved == false) | .id')
+    
+    if [ -z "$thread_ids" ]; then
+        echo "✅ 未解決のCopilotスレッドはありません"
+        return 0
+    fi
+    
+    echo "📝 以下のスレッドを解決します:"
+    echo "$thread_ids"
+    
+    echo "$thread_ids" | while read thread_id; do
+        echo "🔧 解決中: $thread_id"
+        if gh api graphql -f query="mutation { resolveReviewThread(input: {threadId: \"$thread_id\"}) { thread { id isResolved } } }" >/dev/null; then
+            echo "✅ 解決済み: $thread_id"
+        else
+            echo "❌ 解決失敗: $thread_id"
+        fi
+    done
+}
+
+# エラー対処付き単一スレッド解決
+resolve_thread_safe() {
+    local thread_id=$1
+    if [ -z "$thread_id" ]; then
+        echo "Usage: resolve_thread_safe <THREAD_ID>"
+        return 1
+    fi
+    
+    if ! gh api graphql -f query="mutation { resolveReviewThread(input: {threadId: \"$thread_id\"}) { thread { id isResolved } } }"; then
+        echo "❌ 権限エラー: Contents権限とPull Requests権限を確認してください"
+        echo "GitHub Settings > Developer settings > Personal access tokens で設定"
+        return 1
+    fi
+}
+```
+
+#### **従来のGraphQL API（参考）**
 ```bash
 # 会話を解決（単一）
 gh api graphql -f query='
@@ -402,11 +504,106 @@ query {
 }'
 ```
 
+#### **効率化されたスレッドID取得（オプション）**
+```bash
+# 簡潔なスレッドID取得
+gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | "\(.id) | \(.isResolved) | \(.comments[0].author.login) | \(.comments[0].body[:50])..."'
+
+# Copilotスレッドのみ取得
+gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]") | .id'
+
+# 未解決スレッドのみ取得
+gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | select(.isResolved == false) | .id'
+```
+
 ### 完全な対応フロー例
 
 ```bash
 #!/bin/bash
-# reply_and_resolve.sh - Copilot不適切コメント対応
+# copilot_review_workflow.sh - 簡潔なCopilotレビュー対応
+
+PR_NUMBER=$1
+if [ -z "$PR_NUMBER" ]; then
+    echo "Usage: $0 <PR_NUMBER>"
+    exit 1
+fi
+
+echo "🔍 PR #$PR_NUMBER のCopilotレビューを確認中..."
+
+# 1. 未解決Copilotコメントの確認
+echo "📋 未解決のCopilotスレッド一覧:"
+gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]" and .isResolved == false) | "ID: \(.id) | \(.comments[0].body[:80])..."'
+
+# 2. 全Copilotスレッドを一括解決（オプション）
+echo "全てのCopilotスレッドを解決しますか？ (y/N)"
+read -r response
+if [[ "$response" =~ ^[Yy]$ ]]; then
+    echo "🔧 Copilotスレッドを一括解決中..."
+    gh pr view $PR_NUMBER --json reviewThreads --jq -r '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]" and .isResolved == false) | .id' | while read thread_id; do
+        echo "解決中: $thread_id"
+        gh api graphql -f query="mutation { resolveReviewThread(input: {threadId: \"$thread_id\"}) { thread { id } } }" >/dev/null && echo "✅ 完了" || echo "❌ 失敗"
+    done
+    echo "🎉 Copilotレビュー対応完了"
+fi
+```
+
+### エラー対処法の充実
+
+```bash
+# 権限エラー時の詳細対処法
+handle_permission_error() {
+    echo "❌ 権限エラーが発生しました"
+    echo ""
+    echo "📋 確認事項:"
+    echo "1. Personal Access Token の権限設定"
+    echo "   - Repository > Contents: Read and Write"
+    echo "   - Repository > Pull requests: Read and Write"
+    echo ""
+    echo "2. GitHub CLI の認証状態確認:"
+    echo "   gh auth status"
+    echo ""
+    echo "3. リポジトリへのアクセス権確認:"
+    echo "   gh repo view --json permissions"
+}
+
+# スレッドIDが見つからない場合の対処
+debug_thread_issues() {
+    local pr_number=$1
+    echo "🔍 スレッド関連の問題をデバッグ中..."
+    
+    echo "📊 PR基本情報:"
+    gh pr view $pr_number --json number,title,state
+    
+    echo "📋 全レビュースレッド一覧:"
+    gh pr view $pr_number --json reviewThreads --jq '.reviewThreads[] | {id, isResolved, author: .comments[0].author.login}'
+    
+    echo "🤖 Copilotスレッドの詳細:"
+    gh pr view $pr_number --json reviewThreads --jq '.reviewThreads[] | select(.comments[0].author.login == "github-copilot[bot]")'
+}
+
+# 一般的なトラブルシューティング
+troubleshoot_review_api() {
+    echo "🔧 GitHub API トラブルシューティング"
+    echo ""
+    echo "1. gh CLI バージョン確認:"
+    gh version
+    echo ""
+    echo "2. 認証状態確認:"
+    gh auth status
+    echo ""
+    echo "3. API制限確認:"
+    gh api rate_limit
+    echo ""
+    echo "4. 最新のgh CLIへの更新推奨:"
+    echo "   gh extension upgrade --all"
+}
+```
+
+### 従来の詳細フロー（参考）
+
+```bash
+#!/bin/bash
+# reply_and_resolve_detailed.sh - 従来の詳細対応フロー
 
 OWNER="book000"
 REPO="project-name"

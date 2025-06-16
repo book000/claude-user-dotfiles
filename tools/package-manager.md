@@ -10,23 +10,54 @@
 
 ### 1. **ロックファイルでの判定（最優先）**
 
+#### **lock file優先の理由**
+
+1. **実際の依存関係の記録**: lock fileは実際にインストールされた依存関係の正確なバージョンを記録
+2. **チーム統一性**: package.jsonのpackageManagerフィールドは個人設定、lock fileはチーム共有の実態
+3. **CI/CD環境との整合性**: CI環境ではlock fileベースでインストールされることが多い（`npm ci`, `yarn install --frozen-lockfile`等）
+4. **バージョン固定の確実性**: packageManagerフィールドはバージョン固定されていない場合があるが、lock fileは確実
+5. **歴史的経緯**: 多くのプロジェクトでpackageManagerフィールドが設定されていない
+
+#### **判定順序の技術的根拠**
+
 ```bash
 # 各パッケージマネージャーのロックファイル確認
 ls -la | grep -E "(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|bun\.lockb)"
 
-# 判定ロジック
+# 判定ロジック（制限の強い順）
 if [ -f "pnpm-lock.yaml" ]; then
-    PACKAGE_MANAGER="pnpm"
+    PACKAGE_MANAGER="pnpm"    # ワークスペース機能、効率的なディスク使用
 elif [ -f "yarn.lock" ]; then
-    PACKAGE_MANAGER="yarn"  
+    PACKAGE_MANAGER="yarn"    # 古いプロジェクトで多用、安定性重視
 elif [ -f "bun.lockb" ]; then
-    PACKAGE_MANAGER="bun"
+    PACKAGE_MANAGER="bun"     # 新しいランタイム、高速実行
 elif [ -f "package-lock.json" ]; then
-    PACKAGE_MANAGER="npm"
+    PACKAGE_MANAGER="npm"     # デフォルト、最も汎用的
 else
-    PACKAGE_MANAGER="npm"  # デフォルト
+    PACKAGE_MANAGER="npm"     # デフォルト
 fi
 ```
+
+#### **優先順位の詳細理由**
+
+**pnpm-lock.yaml（最優先）:**
+- ワークスペース環境での確実性
+- シンボリックリンクベースの特殊な仕組み
+- 他パッケージマネージャーとの非互換性が高い
+
+**yarn.lock（2番目）:**
+- 歴史的に多くのプロジェクトで採用
+- npmとは微妙に異なる解決アルゴリズム
+- Classic vs Berry（v2+）の区別が重要
+
+**bun.lockb（3番目）:**
+- バイナリ形式の高速読み込み
+- 他ツールでの解析が困難
+- 明確に Bun 専用であることが分かる
+
+**package-lock.json（最後）:**
+- npm標準、最も汎用的
+- 他のパッケージマネージャーでも部分的に参照される場合がある
 
 ### 2. **package.jsonでの確認**
 
@@ -277,6 +308,74 @@ case $PACKAGE_MANAGER in
         bun add --development eslint
         ;;
 esac
+```
+
+## 矛盾時の対処法
+
+### **複数lock fileが存在する場合の詳細対処**
+
+```bash
+# 複数lock file検出と警告
+detect_package_manager_conflicts() {
+    local lock_files=($(ls {pnpm-lock.yaml,yarn.lock,package-lock.json,bun.lockb} 2>/dev/null))
+    if [ ${#lock_files[@]} -gt 1 ]; then
+        echo "⚠️  複数のlock fileが検出されました:"
+        printf '%s\n' "${lock_files[@]}"
+        echo ""
+        echo "📋 対処方法:"
+        echo "1. 使用するパッケージマネージャーを決定"
+        echo "2. 不要なlock fileを削除"
+        echo "3. node_modulesを削除して再インストール"
+        echo ""
+        echo "例: pnpmを使用する場合"
+        echo "  rm package-lock.json yarn.lock bun.lockb"
+        echo "  rm -rf node_modules"
+        echo "  pnpm install"
+        return 1
+    fi
+    return 0
+}
+
+# packageManagerフィールドとlock fileの矛盾確認
+check_package_manager_consistency() {
+    if [ -f "package.json" ]; then
+        local package_manager_field=$(cat package.json | jq -r '.packageManager // empty' | cut -d'@' -f1)
+        local detected_pm=$(detect_package_manager)
+        
+        if [ -n "$package_manager_field" ] && [ "$package_manager_field" != "$detected_pm" ]; then
+            echo "⚠️  package.jsonのpackageManagerとlock fileが不一致:"
+            echo "  package.json: $package_manager_field"
+            echo "  lock file: $detected_pm"
+            echo ""
+            echo "📋 推奨対処:"
+            echo "1. lock fileを信頼する（実際にインストールされた依存関係）"
+            echo "2. package.jsonのpackageManagerフィールドを更新"
+            echo "  または、指定されたパッケージマネージャーで再インストール"
+        fi
+    fi
+}
+```
+
+### **実際のプロジェクトでの矛盾例と対処**
+
+```bash
+# 例1: npm project でyarn.lockが存在
+# 原因: 開発者がyarnを誤って使用
+# 対処: yarn.lockを削除、npmで再インストール
+rm yarn.lock
+npm install
+
+# 例2: package.jsonでpnpm指定、package-lock.jsonが存在  
+# 原因: CI環境でnpmが実行された
+# 対処: package-lock.jsonを削除、pnpmで再インストール
+rm package-lock.json
+pnpm install
+
+# 例3: 複数のパッケージマネージャーのlock fileが共存
+# 原因: 開発チーム内でツール統一されていない
+# 対処: チーム合意の上で統一
+echo "チーム内でパッケージマネージャーを統一してください"
+detect_package_manager_conflicts
 ```
 
 ## トラブルシューティング
