@@ -36,7 +36,8 @@
 
 ### Issue対応（最重要）
 「issue #nnを対応してください」→ 完全自動実行：
-1. Issue内容確認 → 2. ブランチ作成（type/description） → 3. 実装 → 4. 品質チェック → 5. コミット・プッシュ → 6. PR作成（Closes #nn）
+1. **Issue内容・コメント確認** → 2. ブランチ作成（type/description） → 3. 実装 → 4. 品質チェック → 5. コミット・プッシュ → 6. PR作成（Closes #nn）
+**重要**: Issueコメントも必ず確認し、実装方針の変更や追加制約を反映
 詳細: @workflows/issue-handling.md
 
 ### ブランチ戦略
