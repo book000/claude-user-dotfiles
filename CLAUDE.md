@@ -44,7 +44,8 @@ upstream優先、メインブランチ自動判定、no-track設定、Convention
 詳細: @workflows/branch-strategy.md
 
 ### PR作成・更新
-タイトル: Conventional Commits形式、本文: 日本語、Issue連携: Closes #nn、**継続的更新**: 実装変更時PR本文・タイトル適宜更新
+タイトル: Conventional Commits形式、本文: 日本語、**Issue連携: Closes #nn必須**、**継続的更新**: 実装変更時PR本文・タイトル適宜更新
+**重要**: PR作成時は必ずCloses #nnをPR本文に記載、Issue番号を忘れずに連携
 詳細: @workflows/pr-creation.md
 
 ### レビュー対応（完全タスク管理）
