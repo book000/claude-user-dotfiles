@@ -25,13 +25,48 @@ Claude Codeが以下を自動実行：
 ```
 
 ### **ブランチタイプ判定**
-Issueタイトルから以下のルールで自動判定：
-- `bug|fix|error|修正` → `fix/`
-- `feature|add|implement|機能|追加` → `feat/`
-- `doc|readme|ドキュメント` → `docs/`
-- `test|テスト` → `test/`
-- `refactor|リファクタ` → `refactor/`
-- その他 → `fix/`（デフォルト）
+
+#### **基本判定ルール**
+Issueタイトルから以下のパターンで自動判定：
+
+**fix/判定（バグ修正）:**
+- 英語: `bug|fix|error|crash|broken|issue|problem`
+- 日本語: `修正|バグ|エラー|不具合|問題|障害|直す`
+- 混在例: `fix バグ`, `error 修正`, `不具合 fix`
+
+**feat/判定（新機能）:**
+- 英語: `feature|add|implement|create|new|introduce`
+- 日本語: `機能|追加|実装|作成|新規|導入|開発`
+- 混在例: `add 機能`, `新機能 implementation`, `feature 追加`
+
+**docs/判定（ドキュメント）:**
+- 英語: `doc|docs|readme|documentation|guide|manual`
+- 日本語: `ドキュメント|文書|説明|手順|マニュアル|README`
+- 混在例: `docs 更新`, `ドキュメント update`, `README 修正`
+
+**test/判定（テスト）:**
+- 英語: `test|testing|spec|unit|integration|e2e`
+- 日本語: `テスト|試験|検証|単体|結合|E2E`
+- 混在例: `test 追加`, `テスト implementation`, `unit テスト`
+
+**refactor/判定（リファクタリング）:**
+- 英語: `refactor|refactoring|cleanup|reorganize|restructure`
+- 日本語: `リファクタ|リファクタリング|整理|再構成|構造変更`
+- 混在例: `refactor コード`, `リファクタリング cleanup`
+
+**style/判定（スタイル）:**
+- 英語: `style|format|lint|prettier|eslint|codestyle`
+- 日本語: `スタイル|フォーマット|整形|コード規約|Lint`
+
+**perf/判定（パフォーマンス）:**
+- 英語: `perf|performance|optimization|optimize|speed|faster`
+- 日本語: `パフォーマンス|性能|最適化|高速化|速度改善`
+
+#### **デフォルト判定の改善**
+複数パターンに一致する場合の優先順位：
+1. `feat/` > `fix/` > `docs/` > `test/` > `refactor/` > `style/` > `perf/`
+2. 日本語キーワードが含まれる場合は日本語を優先
+3. どのパターンにも一致しない場合は `feat/`（新機能として扱う）
 
 ### **ブランチ名生成ルール**
 ```
