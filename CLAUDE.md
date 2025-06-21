@@ -168,6 +168,16 @@ chmod +x verify_temp.sh && ./verify_temp.sh && rm verify_temp.sh
 - UI要素、図表、スクリーンショットを貼り付け可能
 - 視覚的コンテンツからコード提案を生成
 
+## 📚 詳細ガイド
+
+より詳細な情報は以下を参照：
+
+- **ワークフロー詳細**: @guides/workflows.md
+- **ツール活用テクニック**: @guides/tools-advanced.md  
+- **ベストプラクティス**: @guides/best-practices.md
+- **プロジェクト設定テンプレート**: @templates/project-setup.md
+- **全体構成**: @README.md
+
 ## 🔒 重要な制約事項
 
 - **最小限の原則**: 求められたこと以上でも以下でもなく、正確に実行
