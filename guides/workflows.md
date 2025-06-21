@@ -100,6 +100,41 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 "レビューに対応してください"
 ```
 
+### 必須7ステップ管理
+```json
+[
+  {"id": "1", "content": "レビュー情報収集（PR・コメント確認）", "status": "pending", "priority": "high"},
+  {"id": "2", "content": "Copilotコメント対応（適切/不適切判定・実装）", "status": "pending", "priority": "medium"},
+  {"id": "3", "content": "book000コメント対応（全指摘事項への実装）", "status": "pending", "priority": "high"},
+  {"id": "4", "content": "品質チェック実行（lint/test/typecheck）", "status": "pending", "priority": "medium"},
+  {"id": "5", "content": "【重要】修正内容のコミット・プッシュ", "status": "pending", "priority": "high"},
+  {"id": "6", "content": "Review thread解決（GraphQL API）", "status": "pending", "priority": "medium"},
+  {"id": "7", "content": "完了報告コメント追加", "status": "pending", "priority": "low"}
+]
+```
+
+### レビュー対応完了チェックリスト
+- [ ] **1. コメント収集・確認**
+  - [ ] `gh pr view [PR番号] --comments` 実行
+  - [ ] `gh api repos/[owner]/[repo]/pulls/[PR番号]/comments` 実行
+  - [ ] Copilot・Human両方のコメント確認
+
+- [ ] **2. 修正実装**
+  - [ ] 各指摘事項への対応実装
+  - [ ] サジェストコメントの適用
+  - [ ] 品質チェック（lint/test）実行
+
+- [ ] **3. 【重要】コミット・プッシュ**
+  - [ ] `git add` でファイルステージング
+  - [ ] `git commit` でコミット作成
+  - [ ] `git push` でリモートにプッシュ
+  - [ ] **この手順を忘れやすいので要注意**
+
+- [ ] **4. Review Thread解決**
+  - [ ] GraphQL APIでreview threads取得
+  - [ ] `resolveReviewThread` mutation実行
+  - [ ] 全threadのresolve確認
+
 ### Copilotレビューの取得
 ```bash
 # 1. PR情報取得

@@ -8,9 +8,11 @@
 ~/.claude/
 ├── CLAUDE.md              # メイン設定ファイル
 ├── guides/                # 詳細ガイド
-│   ├── workflows.md       # ワークフロー詳細
+│   ├── workflows.md       # ワークフロー詳細（Issue対応・レビュー対応）
 │   ├── tools-advanced.md  # ツール活用テクニック
-│   └── best-practices.md  # ベストプラクティス
+│   └── best-practices.md  # ベストプラクティス・ドキュメント記述原則
+├── guidelines/            # 記述方針・原則
+│   └── documentation-guidelines.md
 ├── templates/             # プロジェクト用テンプレート
 │   └── project-setup.md   # 新規プロジェクト設定
 ├── archive/               # 旧設定の保管
