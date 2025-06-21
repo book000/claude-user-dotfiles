@@ -3,7 +3,7 @@ local/
 
 # プロジェクト固有のセッションデータ（プライバシー保護）
 projects/*/
-todos/*/
+todos/
 
 # ユーザー固有の設定・認証情報
 .credentials.json
