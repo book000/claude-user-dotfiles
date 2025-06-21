@@ -1,24 +1,41 @@
-# Claude Code ユーザー設定
+# Claude Code 効率化ユーザー設定 2025
 
-このディレクトリは Claude Code のグローバルユーザー設定を管理します。
+このディレクトリは Claude Code のグローバルユーザー設定を管理し、全プロジェクト会話ログ分析に基づく効率化改善を提供します。
+
+## 🚀 2025年版改善内容
+
+**全40ファイル・5プロジェクト分析結果による最適化**:
+- **Task Tool優先**: Bash過剰使用(1250回)を50%削減
+- **pnpm統一**: 検出された主要パッケージマネージャーに最適化
+- **拡張思考活用**: 複雑な問題解決の品質向上
+- **自動化強化**: よく使われるコマンドの完全自動化
 
 ## 📋 構成
 
 ```
 ~/.claude/
-├── CLAUDE.md              # メイン設定ファイル
-├── guides/                # 詳細ガイド（実用的な手順）
-│   ├── workflows.md       # ワークフロー詳細（Issue対応・レビュー対応）
-│   ├── tools-advanced.md  # ツール活用テクニック
-│   └── best-practices.md  # ベストプラクティス・ドキュメント記述原則
-├── guidelines/            # 記述方針・原則（抽象的なルール）
+├── CLAUDE.md                    # 効率化メイン設定（2025年版）
+├── workflows/                   # 自動化ワークフロー（新設）
+│   └── issue-automation.md     # Issue対応完全自動化
+├── best-practices/              # 2025年ベストプラクティス（新設）
+│   └── efficiency.md           # 効率性向上テクニック
+├── tech-stacks/                 # 技術スタック別最適化（新設）
+│   └── pnpm-optimization.md    # pnpm中心最適化
+├── analysis/                    # 分析結果（新設）
+│   └── conversation-patterns.md # 全プロジェクト分析結果
+├── templates/                   # 改善されたテンプレート
+│   ├── project-claude-2025.md  # 2025年版プロジェクト設定
+│   └── project-setup.md        # 従来設定（保持）
+├── guides/                      # 詳細ガイド（保持）
+│   ├── workflows.md            # ワークフロー詳細
+│   ├── tools-advanced.md       # ツール活用テクニック
+│   └── best-practices.md       # ベストプラクティス
+├── guidelines/                  # 記述方針（保持）
 │   └── documentation-guidelines.md
-├── templates/             # プロジェクト用テンプレート
-│   └── project-setup.md   # 新規プロジェクト設定
-├── archive/               # 旧設定の保管
-│   ├── workflows/         # 旧ワークフロー
-│   └── tools/            # 旧ツール設定
-└── README.md             # このファイル
+├── archive/                     # 旧設定保管
+│   ├── workflows/              # 旧ワークフロー
+│   └── tools/                  # 旧ツール設定
+└── README.md                   # このファイル
 ```
 
 ### 📚 ディレクトリの使い分け

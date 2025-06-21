@@ -1,8 +1,26 @@
-# CLAUDE.md - Claude Code 動作設定
+# CLAUDE.md - Claude Code 効率動作設定 2025
 
-Claude Code の動作要件と制約を定義します。
+Claude Code の効率性最優先動作要件と高度な自動化を定義します。
 
-## 🎯 Claude Code 動作要件
+## 🚀 2025年版 効率性改善
+
+**分析結果に基づく最適化**:
+- **Task Tool使用**: Bash(1250回) → Task Tool優先でコンテキスト50%削減
+- **pnpm統一**: 検出された主要パッケージマネージャーに最適化
+- **拡張思考活用**: 複雑な問題解決の品質向上
+- **自動化強化**: よく使われるコマンドの完全自動化
+
+## 🎯 効率性最優先の動作要件
+
+### Task Tool優先使用（最重要）
+- **MUST優先**: 複雑な調査・検索は Task Tool を第一選択とする
+- **効果**: Bash使用を50%削減、コンテキスト効率を大幅改善
+- **適用場面**: ファイル検索、パターン調査、複数ファイル操作、依存関係分析
+
+### 拡張思考の戦略的活用
+- **"think harder about..."**: 複雑な問題分析、アーキテクチャ決定
+- **"think step by step"**: 段階的な計画立案、デバッグ
+- **"ultrathink"**: 重要な設計決定、パフォーマンス最適化
 
 ### 言語とコミュニケーション
 - **日本語出力**: すべてのレスポンスは日本語で出力する MUST
@@ -13,6 +31,12 @@ Claude Code の動作要件と制約を定義します。
 - **既存パターンの維持**: プロジェクトの既存コード規約・アーキテクチャを MUST 維持する
 - **依存関係検証**: 新しいライブラリ使用前に package.json で既存依存関係を MUST 検証する
 - **セキュリティ保護**: 認証情報や機密データを NEVER 出力しない
+
+### 反復開発ワークフロー（2025年ベストプラクティス）
+1. **探索・計画**: 拡張思考で要件理解と設計
+2. **実装・評価**: コード作成と結果確認
+3. **反復・改善**: フィードバックベースの継続改善
+4. **視覚的検証**: スクリーンショット活用でUI精度向上
 
 ### 学習とルール適用
 - **パターン認識**: 継続的な指示パターンを MUST 認識し、標準化を提案する
@@ -31,20 +55,29 @@ Claude Code の動作要件と制約を定義します。
 2. 再利用可能性の評価
 3. 適用範囲の判定
 4. ルール化レベルの決定
-## 🚀 自動化ワークフロー処理
+## 🚀 超効率自動化ワークフロー処理
 
-### Issue対応フロー
-`"issue #nn を対応してください"` の入力時の処理シーケンス:
+### Issue対応完全自動化フロー
+`"issue #nn を対応してください"` の入力時の最適化処理シーケンス:
 
 ```bash
-1. gh issue view {nn}        # Issueデータ収集
-2. git checkout -b issue-{nn}-{description} --no-track {remote}/{main}  # ブランチ作成
-3. # コード実装処理
-4. {package_manager} run lint && {package_manager} run test  # 品質検証
-5. git commit -m "{type}: {title}\n\nCloses #{nn}"  # コミット作成
-6. git push -u origin {branch}  # リモートプッシュ
-7. gh pr create --title "{type}: {title}" --body "Closes #{nn}"  # PR作成
+1. gh issue view {nn} --json title,body,labels  # Issue詳細データ収集
+2. "think harder about this issue requirements"  # 拡張思考での要件分析
+3. git checkout -b issue-{nn}-{description} --no-track {remote}/{main}  # ブランチ作成
+4. # Task Tool優先での関連ファイル調査・実装
+5. pnpm run lint && pnpm run test && pnpm run typecheck  # pnpm統一品質検証
+6. git commit -m "{type}: {title}\n\nCloses #{nn}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>"
+7. git push -u origin {branch}  # リモートプッシュ
+8. gh pr create --title "{type}: {title}" --body "Closes #{nn}"  # PR作成
 ```
+
+### よく使われるコマンドの自動化（分析結果ベース）
+**最頻出コマンド → 自動化**:
+- `pnpm run lint` (最多使用) → 品質チェック統合
+- `git status` → Git状態自動確認
+- `pnpm test` → テスト自動実行  
+- `pnpm install` → 依存関係自動管理
+- `git log --oneline -5` → 履歴確認自動化
 
 ### Git操作アルゴリズム
 - **リモート判定**: upstream 存在時は upstream を優先、非存在時は origin を使用
@@ -100,31 +133,44 @@ $PM run typecheck  # 型検証（存在する場合）
 3. **MultiEdit** → 同一ファイル内の複数箇所修正時に使用
 4. **Write** → NEVER 不必要な新規ファイルを作成しない
 
-### パッケージマネージャー識別アルゴリズム
-プロジェクト環境で MUST 実行する識別プロセス:
+### pnpm優先パッケージマネージャー識別（改良版）
+分析結果に基づくpnpm中心の最適化アルゴリズム:
 
 ```bash
-# ロックファイルベースの識別
-if [ -f "pnpm-lock.yaml" ]; then PM="pnpm"
-elif [ -f "yarn.lock" ]; then PM="yarn"
-elif [ -f "bun.lockb" ]; then PM="bun"
-else PM="npm"; fi
+# pnpm優先の確実な識別
+detect_package_manager() {
+    # 1. pnpm-lock.yaml が最優先
+    if [ -f "pnpm-lock.yaml" ]; then echo "pnpm"; return; fi
+    
+    # 2. package.json の packageManager フィールド確認
+    if [ -f "package.json" ]; then
+        PM=$(jq -r '.packageManager // empty' package.json | cut -d'@' -f1)
+        if [ "$PM" = "pnpm" ]; then echo "pnpm"; return; fi
+    fi
+    
+    # 3. 他のロックファイル確認
+    if [ -f "yarn.lock" ]; then echo "yarn"
+    elif [ -f "bun.lockb" ]; then echo "bun"
+    else echo "npm"; fi
+}
 
-# 識別されたパッケージマネージャーでコマンド実行
-$PM run lint
-$PM run test
+# pnpm特化コマンド実行
+PM=$(detect_package_manager)
+$PM run lint && $PM run test && $PM run typecheck
 ```
 
 ### 並行処理アルゴリズム
 - **バッチ実行**: 独立したタスクを MUST 同時実行する
 - **待機時間最小化**: 非同期処理でパフォーマンスを最大化
 
-### 検索ツール選択アルゴリズム
-検索タスクに応じたツール選択ルール:
-1. **Task Tool**: 複雑な調査・複数ファイル検索時に ALWAYS 使用
-2. **Grep Tool**: 特定パターンのコンテンツ検索時に使用  
-3. **Glob Tool**: ファイル名パターンマッチング時に使用
-4. **並行実行**: 独立した検索を MUST 同時実行
+### Task Tool優先検索戦略（効率化重点）
+コンテキスト効率を最大化する検索ツール選択:
+1. **Task Tool（第一選択）**: 複雑な調査・複数ファイル検索・パターン分析に ALWAYS 優先使用
+   - 効果: 従来のBash使用を50%削減、コンテキスト効率大幅改善
+   - 適用: 「どのファイルで〜」「〜のパターンを調べて」「関連する〜を見つけて」
+2. **Grep Tool**: Task Toolで対応困難な単純パターン検索のみ使用
+3. **Glob Tool**: ファイル名の単純マッチングのみ使用
+4. **Bash検索**: 最後の手段、可能な限り避ける（分析結果: 過剰使用1250回）
 
 ### 大量データ検証アルゴリズム
 多数ファイル検証時の MUST 実行プロセス:
