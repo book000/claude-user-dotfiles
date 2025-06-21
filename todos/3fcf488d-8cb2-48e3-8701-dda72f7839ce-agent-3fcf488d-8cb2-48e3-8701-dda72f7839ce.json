@@ -1,0 +1,20 @@
+[
+  {
+    "content": "check-cinnamonスクリプトのエラー修正と改良コード反映",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Cinnamonサーバー接続方法の文書化と再発防止策",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "check-cinnamon.mdの更新とアクセス情報の整備",
+    "status": "completed",
+    "priority": "medium",
+    "id": "3"
+  }
+]

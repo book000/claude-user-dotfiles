@@ -1,0 +1,32 @@
+[
+  {
+    "content": "Cookie更新のリトライ機能を実装（最大10回）",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "タイムスタンプ更新後の失敗ケースに対応",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "リトライ間隔とログ出力の最適化",
+    "status": "completed",
+    "priority": "medium",
+    "id": "3"
+  },
+  {
+    "content": "指数バックオフとランダム要素を追加",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  },
+  {
+    "content": "リトライ成功時のカウンターリセット機能",
+    "status": "completed",
+    "priority": "medium",
+    "id": "5"
+  }
+]

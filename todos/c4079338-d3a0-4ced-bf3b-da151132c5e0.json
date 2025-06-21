@@ -1,0 +1,44 @@
+[
+  {
+    "content": "Check current CI status and identify failures",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Run lint command locally to identify issues",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Run tests locally to identify failures",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "Fix any linting errors",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  },
+  {
+    "content": "Fix any test failures",
+    "status": "completed",
+    "priority": "medium",
+    "id": "5"
+  },
+  {
+    "content": "Verify all fixes pass CI checks",
+    "status": "completed",
+    "priority": "low",
+    "id": "6"
+  },
+  {
+    "content": "Fix example-pages.test.ts setTimeout issue with fake timers",
+    "status": "completed",
+    "priority": "high",
+    "id": "7"
+  }
+]

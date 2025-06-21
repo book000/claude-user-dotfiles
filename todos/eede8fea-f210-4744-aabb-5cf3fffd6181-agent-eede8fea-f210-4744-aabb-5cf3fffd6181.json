@@ -1,0 +1,32 @@
+[
+  {
+    "content": "Cinnamonサーバーの継続的監視を無限ループで実行",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "適応的監視間隔（5分〜30分）に基づいた自動実行",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "エラー検出時の即座の対応と報告",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "認証エラー検出 - Cookie更新が必要",
+    "status": "completed",
+    "priority": "high",
+    "id": "4"
+  },
+  {
+    "content": "監視ループの再開と継続",
+    "status": "completed",
+    "priority": "high",
+    "id": "5"
+  }
+]

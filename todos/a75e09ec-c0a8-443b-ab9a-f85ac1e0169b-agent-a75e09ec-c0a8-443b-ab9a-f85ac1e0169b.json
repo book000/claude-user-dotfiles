@@ -1,0 +1,26 @@
+[
+  {
+    "content": "GitHubリポジトリ自動設定スクリプトの設計",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "設定テンプレートファイルの作成",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "メインスクリプトの実装",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "スクリプトのテストとドキュメント作成",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  }
+]

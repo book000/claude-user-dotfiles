@@ -1,0 +1,14 @@
+[
+  {
+    "content": "1時間おきに/check-cinnamonを実行してCinnamonサーバーの状態を監視",
+    "status": "in_progress",
+    "priority": "high",
+    "id": "check-cinnamon-hourly"
+  },
+  {
+    "content": "定期的な監視スケジュールを設定し、実行記録を管理",
+    "status": "pending",
+    "priority": "medium",
+    "id": "setup-monitoring-schedule"
+  }
+]

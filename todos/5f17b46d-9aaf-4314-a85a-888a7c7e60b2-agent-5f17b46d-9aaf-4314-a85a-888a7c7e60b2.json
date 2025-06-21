@@ -1,0 +1,26 @@
+[
+  {
+    "content": "継続監視スクリプト作成 - 1時間おきに/check-cinnamonを実行",
+    "status": "in_progress",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "TODO管理機能の組み込み - 実行状況とエラー履歴の記録",
+    "status": "pending",
+    "priority": "medium",
+    "id": "2"
+  },
+  {
+    "content": "ログ出力とアラート機能の実装",
+    "status": "pending",
+    "priority": "medium",
+    "id": "3"
+  },
+  {
+    "content": "動作テストと検証",
+    "status": "pending",
+    "priority": "medium",
+    "id": "4"
+  }
+]

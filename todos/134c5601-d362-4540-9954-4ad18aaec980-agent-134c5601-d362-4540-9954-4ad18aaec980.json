@@ -1,0 +1,32 @@
+[
+  {
+    "content": "Issue #38の詳細分析と現在のコード理解",
+    "status": "completed",
+    "priority": "high",
+    "id": "issue-38-analysis"
+  },
+  {
+    "content": "Phase 1: HeaderEnhancerクラスの基本実装",
+    "status": "completed",
+    "priority": "high",
+    "id": "phase1-header-enhancer"
+  },
+  {
+    "content": "Phase 2: 既存api.pyとの統合",
+    "status": "completed",
+    "priority": "high",
+    "id": "phase2-integration"
+  },
+  {
+    "content": "Phase 3: 設定オプションとテスト追加",
+    "status": "completed",
+    "priority": "medium",
+    "id": "phase3-configuration"
+  },
+  {
+    "content": "テスト実行と動作検証",
+    "status": "completed",
+    "priority": "medium",
+    "id": "testing-validation"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "content": "Examine current PageErrorHandler implementation",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "Research JavaScript stack trace and caller detection methods",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "Implement caller detection in PageErrorHandler methods",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "Update tests for PageErrorHandler with caller detection",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  },
+  {
+    "content": "Run tests and lint checks",
+    "status": "completed",
+    "priority": "medium",
+    "id": "5"
+  }
+]

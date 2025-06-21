@@ -1,0 +1,32 @@
+[
+  {
+    "content": "GitHubのPR情報を取得して内容を確認する",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "必要に応じてリポジトリをクローンしてコードを詳細確認する",
+    "status": "completed",
+    "priority": "medium",
+    "id": "2"
+  },
+  {
+    "content": "コードレビューを実施する",
+    "status": "completed",
+    "priority": "high",
+    "id": "3"
+  },
+  {
+    "content": "レビュー結果をPRコメントとして投稿する",
+    "status": "completed",
+    "priority": "high",
+    "id": "4"
+  },
+  {
+    "content": "より詳細・細かいレビューを実施して追加コメントを投稿",
+    "status": "completed",
+    "priority": "high",
+    "id": "5"
+  }
+]

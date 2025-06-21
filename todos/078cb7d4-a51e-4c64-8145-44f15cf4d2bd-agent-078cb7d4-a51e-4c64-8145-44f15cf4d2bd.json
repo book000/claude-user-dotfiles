@@ -1,0 +1,32 @@
+[
+  {
+    "content": "SmartHRのprhルールファイルをコピーする",
+    "status": "completed",
+    "priority": "high",
+    "id": "1"
+  },
+  {
+    "content": "問題のある「全角記号？・！の後に全角スペース」ルールを削除",
+    "status": "completed",
+    "priority": "high",
+    "id": "2"
+  },
+  {
+    "content": "カスタムルールファイルを.textlintrcに設定",
+    "status": "completed",
+    "priority": "medium",
+    "id": "3"
+  },
+  {
+    "content": "lintテストを実行して動作確認",
+    "status": "completed",
+    "priority": "medium",
+    "id": "4"
+  },
+  {
+    "content": "PRを更新",
+    "status": "completed",
+    "priority": "medium",
+    "id": "5"
+  }
+]
