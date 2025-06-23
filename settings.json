@@ -19,5 +19,19 @@
   },
   "env": {
     "BASH_DEFAULT_TIMEOUT_MS": 10800000
+  },
+  "mcpServers": {
+    "puppeteer": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "--init", "-e", "DOCKER_CONTAINER=true", "mcp/puppeteer"],
+      "env": {}
+    },
+    "fetch": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "env": {}
+    }
   }
 }
