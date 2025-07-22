@@ -4,6 +4,7 @@ local/
 # プロジェクト固有のセッションデータ（プライバシー保護）
 projects/*/
 todos/
+shell-snapshots/
 
 # ユーザー固有の設定・認証情報
 .credentials.json
@@ -52,6 +53,7 @@ ide/
 .env*
 api-keys.json
 *.pem
+discord-config.json
 
 # アーカイブ（旧設定の保管用）
 archive/
