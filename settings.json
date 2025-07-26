@@ -1,4 +1,7 @@
 {
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": "10800000"
+  },
   "permissions": {
     "allow": [
       "Bash",
@@ -17,7 +20,17 @@
     ],
     "deny": []
   },
-  "env": {
-    "BASH_DEFAULT_TIMEOUT_MS": 10800000
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq | ~/.claude/scripts/completion-notify/notify-completion-with-embed.sh"
+          }
+        ]
+      }
+    ]
   }
 }

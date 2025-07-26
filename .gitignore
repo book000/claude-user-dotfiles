@@ -57,3 +57,5 @@ discord-config.json
 
 # アーカイブ（旧設定の保管用）
 archive/
+
+data/
