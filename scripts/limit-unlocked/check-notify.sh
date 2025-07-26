@@ -4,6 +4,7 @@ cd $(dirname "$0") || exit 1
 TARGET_DIR="$HOME/.claude/projects"
 CURRENT_TS=$(date +%s)
 
+mkdir -p "$HOME/.claude/scripts/limit-unlocked/data"
 PAST_FILE="$HOME/.claude/scripts/limit-unlocked/data/past.txt"
 FUTURE_FILE="$HOME/.claude/scripts/limit-unlocked/data/future.txt"
 NOTIFIED_FILE="$HOME/.claude/scripts/limit-unlocked/data/notified.txt"
