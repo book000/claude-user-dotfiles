@@ -53,6 +53,17 @@ if [ ! -f "$NOTIFIED_FILE" ]; then
     exit 0
 fi
 
+send_to_claude_sessions() {
+  for session in $(tmux list-sessions -F "#{session_name}"); do
+    cmd=$(tmux display-message -t "$session" -p '#{pane_current_command}' 2>/dev/null || echo "unknown")
+    if [[ "$cmd" == "claude" ]]; then
+      tmux send-keys -t "$session" "続けてください"
+      sleep 1
+      tmux send-keys -t "$session" Enter
+    fi
+  done
+}
+
 # 未通知イベント検出
 NEW_NOTIFICATIONS=$(grep -Fvxf "$NOTIFIED_FILE" "$PAST_FILE")
 if [ -n "$NEW_NOTIFICATIONS" ]; then
@@ -78,6 +89,9 @@ if [ -n "$NEW_NOTIFICATIONS" ]; then
              -d "$PAYLOAD" \
              "$DISCORD_WEBHOOK_URL" >/dev/null
     done <<< "$NEW_NOTIFICATIONS"
+
+    # tmuxセッションに通知
+    send_to_claude_sessions
 
     # 通知済みファイル更新
     echo "$NEW_NOTIFICATIONS" >> "$NOTIFIED_FILE"
