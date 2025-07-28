@@ -18,7 +18,9 @@
       "WebFetch(*)",
       "Bash(mkdir:*)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(git push --no-verify)"
+    ]
   },
   "hooks": {
     "Stop": [
