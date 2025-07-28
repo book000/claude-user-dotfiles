@@ -12,9 +12,12 @@ REPO_INFO=$(gh repo view --json owner,name)
 OWNER=$(echo "$REPO_INFO" | jq -r '.owner.login')
 REPO=$(echo "$REPO_INFO" | jq -r '.name')
 
-# 一時ファイル
+echo "🔍 Collecting unresolved review comments for PR #$PR_NUMBER in $OWNER/$REPO"
+
+# 一時ファイル（クリーンアップトラップ付き）
 REST_JSON=$(mktemp)
 GRAPHQL_JSON=$(mktemp)
+trap 'rm -f "$REST_JSON" "$GRAPHQL_JSON"' EXIT
 
 # 1. REST APIでPRコメント取得
 gh api "/repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}/comments" > "$REST_JSON"
@@ -46,8 +49,20 @@ RESOLVED_IDS=$(jq -r '
 ' "$GRAPHQL_JSON")
 
 # 4. REST API結果から resolved な node_id を除外して表示
-jq -r --argjson resolved "$(jq -Rn --argjson arr "$(printf '%s\n' $RESOLVED_IDS | jq -R . | jq -s .)" '$arr')" '
+UNRESOLVED_COMMENTS=$(jq -r --argjson resolved "$(jq -Rn --argjson arr "$(printf '%s\n' $RESOLVED_IDS | jq -R . | jq -s .)" '$arr')" '
   map(select((.node_id) as $id | ($resolved | index($id) | not)))
   | .[]
   | "\(.id)\t\(.path)\nURL: \(.html_url)\nCOMMENT: \(.body)\n---"
-' "$REST_JSON"
+' "$REST_JSON")
+
+TOTAL_COMMENTS=$(jq '. | length' "$REST_JSON")
+UNRESOLVED_COUNT=$(echo "$UNRESOLVED_COMMENTS" | grep -c "^[0-9]" || echo "0")
+
+echo "📊 Comments: $UNRESOLVED_COUNT unresolved / $TOTAL_COMMENTS total"
+echo "=================================="
+
+if [ "$UNRESOLVED_COUNT" -gt 0 ]; then
+  echo "$UNRESOLVED_COMMENTS"
+else
+  echo "✅ All review comments have been resolved!"
+fi

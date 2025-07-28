@@ -44,6 +44,7 @@ Claude Code の動作要件と制約を定義します。
 5. git commit -m "{type}: {title}\n\nCloses #{nn}"  # コミット作成
 6. git push -u origin {branch}  # リモートプッシュ
 7. gh pr create --title "{type}: {title}" --body "Closes #{nn}"  # PR作成
+8. ~/.claude/scripts/github-pr/wait-for-ci.sh  # CI完了待機
 ```
 
 ### Git操作アルゴリズム
@@ -61,7 +62,7 @@ Claude Code の動作要件と制約を定義します。
 
 ```bash
 # 1. レビューデータ収集
-gh api repos/{owner}/{repo}/pulls/{pr}/comments
+~/.claude/scripts/github-pr/collect-review.sh {pr_number}
 
 # 2. レビュワーの正確な識別・分類処理
 # - Copilot: user.login == "github-copilot[bot]" (重要: 正確な文字列マッチング)
@@ -89,6 +90,38 @@ else PM="npm"; fi
 $PM run lint    # コードスタイル検証
 $PM run test    # テスト実行
 $PM run typecheck  # 型検証（存在する場合）
+```
+
+## 🔧 専用スクリプト連携
+
+### スクリプト自動実行ルール
+特定の指示に対してスクリプトを MUST 自動実行する:
+
+```bash
+# GitHub PR関連
+"レビューに対応してください" → collect-review.sh でコメント収集
+"CIが完了するまで待機" → wait-for-ci.sh で監視実行
+"未解決コメントを確認" → collect-review.sh でフィルタリング
+
+# 設定管理
+"Claude設定を同期" → pull.sh で最新取得
+"設定変更を確認" → git status でローカル変更確認
+```
+
+### スクリプト活用優先度
+1. **High Priority**: GitHub PR操作（collect-review.sh, wait-for-ci.sh）
+2. **Medium Priority**: 設定同期（pull.sh）
+
+### スクリプト実行前チェック
+```bash
+# 1. 実行権限確認
+if [ ! -x ~/.claude/scripts/github-pr/collect-review.sh ]; then
+    chmod +x ~/.claude/scripts/github-pr/*.sh
+fi
+
+# 2. 必要な依存関係確認
+command -v gh >/dev/null || echo "GitHub CLI required"
+command -v jq >/dev/null || echo "jq required"
 ```
 
 ## 🛠️ ツール実行アルゴリズム
@@ -198,6 +231,7 @@ chmod +x verify_temp.sh && ./verify_temp.sh && rm verify_temp.sh
 - **ワークフロー詳細**: @guides/workflows.md
 - **ツール活用テクニック**: @guides/tools-advanced.md  
 - **ベストプラクティス**: @guides/best-practices.md
+- **スクリプトガイド**: @guides/scripts.md
 - **プロジェクト設定テンプレート**: @templates/project-setup.md
 - **全体構成**: @README.md
 
