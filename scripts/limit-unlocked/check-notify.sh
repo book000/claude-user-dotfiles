@@ -57,9 +57,11 @@ send_to_claude_sessions() {
   for session in $(tmux list-sessions -F "#{session_name}"); do
     cmd=$(tmux display-message -t "$session" -p '#{pane_current_command}' 2>/dev/null || echo "unknown")
     if [[ "$cmd" == "claude" ]]; then
-      tmux send-keys -t "$session" "続けてください"
+      echo "Sending keys to session $session"
+      tmux send-keys -t "$session:0.0" "続けてください"
       sleep 1
-      tmux send-keys -t "$session" Enter
+      tmux send-keys -t "$session:0.0" Enter
+      sleep 1
     fi
   done
 }
