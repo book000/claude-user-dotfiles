@@ -44,7 +44,7 @@ Claude Code の動作要件と制約を定義します。
 5. git commit -m "{type}: {title}\n\nCloses #{nn}"  # コミット作成
 6. git push -u origin {branch}  # リモートプッシュ
 7. gh pr create --title "{type}: {title}" --body "Closes #{nn}"  # PR作成
-8. ~/.claude/scripts/github-pr/wait-for-ci.sh  # CI完了待機（必要に応じて）
+8. ~/.claude/scripts/github-pr/wait-for-ci.sh  # CI完了待機
 ```
 
 ### Git操作アルゴリズム
@@ -61,7 +61,7 @@ Claude Code の動作要件と制約を定義します。
 `"レビューに対応してください"` の入力時の処理:
 
 ```bash
-# 1. レビューデータ収集（専用スクリプト活用）
+# 1. レビューデータ収集
 ~/.claude/scripts/github-pr/collect-review.sh {pr_number}
 
 # 2. レビュワーの正確な識別・分類処理
@@ -106,16 +106,11 @@ $PM run typecheck  # 型検証（存在する場合）
 # 設定管理
 "Claude設定を同期" → pull.sh で最新取得
 "設定変更を確認" → git status でローカル変更確認
-
-# 通知システム
-セッション完了時 → notify-completion-with-embed.sh（Hook経由）
-制限解除検出時 → check-notify.sh（定期実行）
 ```
 
 ### スクリプト活用優先度
 1. **High Priority**: GitHub PR操作（collect-review.sh, wait-for-ci.sh）
 2. **Medium Priority**: 設定同期（pull.sh）
-3. **Low Priority**: 通知システム（手動/自動実行）
 
 ### スクリプト実行前チェック
 ```bash
@@ -127,9 +122,6 @@ fi
 # 2. 必要な依存関係確認
 command -v gh >/dev/null || echo "GitHub CLI required"
 command -v jq >/dev/null || echo "jq required"
-
-# 3. 設定ファイル確認（Discord通知使用時）
-[ -f ~/.claude/scripts/completion-notify/.env ] || echo "Discord設定が必要"
 ```
 
 ## 🛠️ ツール実行アルゴリズム
