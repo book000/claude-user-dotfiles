@@ -18,49 +18,6 @@
 - 手動でClaude設定を最新化したい時
 - チーム環境での設定同期
 
-### 📢 通知システム
-
-#### notify-completion-with-embed.sh
-```bash
-# 場所: ~/.claude/scripts/completion-notify/notify-completion-with-embed.sh
-# 設定: .env ファイルが必要
-```
-
-**概要**: Claude Code セッション完了時にDiscord Webhookでリッチな通知を送信するHookスクリプトです。
-
-**機能**:
-- セッション完了の自動通知
-- 実行ディレクトリ・セッションIDの表示
-- 最新5件の会話履歴表示
-- Discord Embedフォーマットでの美しい通知
-
-**設定ファイル(.env)**:
-```bash
-DISCORD_TOKEN="Discord WebhookのURL"
-MENTION_USER_ID="通知対象のDiscordユーザーID"
-```
-
-#### check-notify.sh
-```bash
-# 場所: ~/.claude/scripts/limit-unlocked/check-notify.sh
-# 用途: Claude使用制限解除の自動通知
-# 実行: crontabなどで定期実行推奨
-```
-
-**概要**: Claude APIの使用制限が解除されたプロジェクトを検出し、Discord通知を送信します。
-
-**機能**:
-- 過去の制限記録を分析
-- 制限解除済みプロジェクトの検出
-- 重複通知の防止
-- 詳細情報付きDiscord通知
-
-**データ管理**:
-- データ保存先: `~/.claude/scripts/limit-unlocked/data/`
-- `past.txt`: 過去の制限記録
-- `future.txt`: 未来の制限記録
-- `notified.txt`: 通知済み記録
-
 ### 🔧 GitHub連携スクリプト
 
 #### collect-review.sh
@@ -119,20 +76,6 @@ MENTION_USER_ID="通知対象のDiscordユーザーID"
 
 ## ⚙️ 設定とセットアップ
 
-### Discord通知の設定
-
-Discord通知機能を使用するには、各スクリプトディレクトリに `.env` ファイルを作成する必要があります：
-
-```bash
-# ~/.claude/scripts/completion-notify/.env
-DISCORD_TOKEN="https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
-MENTION_USER_ID="YOUR_DISCORD_USER_ID"
-
-# ~/.claude/scripts/limit-unlocked/.env  
-DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
-MENTION_USER_ID="YOUR_DISCORD_USER_ID"
-```
-
 ### 実行権限の設定
 
 ```bash
@@ -140,26 +83,7 @@ MENTION_USER_ID="YOUR_DISCORD_USER_ID"
 find ~/.claude/scripts -name "*.sh" -exec chmod +x {} \;
 ```
 
-### Cron設定（制限解除通知）
-
-```bash
-# crontabに追加（10分ごとに制限解除をチェック）
-*/10 * * * * ~/.claude/scripts/limit-unlocked/check-notify.sh >/dev/null 2>&1
-```
-
 ## 🚀 Claude Code との統合
-
-### Hook設定
-
-Claude Code の設定ファイルでHookを有効化：
-
-```json
-{
-  "hooks": {
-    "stop": "~/.claude/scripts/completion-notify/notify-completion-with-embed.sh"
-  }
-}
-```
 
 ### 自動実行の活用
 
@@ -176,7 +100,6 @@ Claude Code の通常ワークフローでこれらのスクリプトを活用�
 "issue #123 を対応してください"
 → 実装完了後
 → wait-for-ci.sh でCI完了を待機
-→ completion-notify で完了通知
 ```
 
 ## 🔧 カスタマイズとメンテナンス
@@ -196,14 +119,11 @@ Claude Code の通常ワークフローでこれらのスクリプトを活用�
 
 ```bash
 # デバッグモードでの実行例
-DEBUG=true ~/.claude/scripts/completion-notify/notify-completion-with-embed.sh
 ~/.claude/scripts/github-pr/wait-for-ci.sh --debug
 ```
 
 ### セキュリティ考慮事項
 
-- `.env` ファイルは絶対にGitにコミットしない
-- Discord WebhookのURLは適切に管理
 - スクリプトの実行権限は最小限に
 - 定期的なセキュリティ監査の実施
 
@@ -222,4 +142,3 @@ DEBUG=true ~/.claude/scripts/completion-notify/notify-completion-with-embed.sh
 
 - [Claude Code Hook システム](https://docs.anthropic.com/en/docs/claude-code/hooks)
 - [GitHub CLI Manual](https://cli.github.com/manual/)
-- [Discord Webhook Guide](https://discord.com/developers/docs/resources/webhook)
