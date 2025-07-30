@@ -19,7 +19,9 @@
       "Bash(mkdir:*)"
     ],
     "deny": [
-      "Bash(git push --no-verify)"
+      "Bash(git push --no-verify)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm dev &)"
     ]
   },
   "hooks": {
