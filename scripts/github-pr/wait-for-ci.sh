@@ -86,7 +86,7 @@ while true; do
   fi
 
   # 最新のワークフロー実行を取得
-  RUN_INFO=$(gh run list --limit 10 --json headBranch,databaseId,status,conclusion,createdAt,updatedAt -q ".[] | select(.headBranch == \"$PR_HEAD_REF\")" | head -n 1)
+  RUN_INFO=$(gh run list --limit 10 --json headBranch,databaseId,status,conclusion,createdAt,updatedAt,workflowName -q ".[] | select(.headBranch == \"$PR_HEAD_REF\")" | head -n 1)
 
   if [ -z "$RUN_INFO" ]; then
     echo "Monitor: ${ELAPSED_TIME}s - No workflow run found for branch $PR_HEAD_REF. Waiting..."
@@ -103,6 +103,7 @@ while true; do
   RUN_CONCLUSION=$(echo "$RUN_INFO" | jq -r '.conclusion')
   RUN_CREATED=$(echo "$RUN_INFO" | jq -r '.createdAt')
   RUN_UPDATED=$(echo "$RUN_INFO" | jq -r '.updatedAt')
+  WORKFLOW_NAME=$(echo "$RUN_INFO" | jq -r '.workflowName')
 
   # GitHub Actionsの実際の経過時間を計算
   RUN_CREATED_EPOCH=$(date -d "$RUN_CREATED" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$RUN_CREATED" +%s 2>/dev/null || echo "$START_TIME")
@@ -114,9 +115,9 @@ while true; do
     RUN_DURATION=$((CURRENT_TIME - RUN_CREATED_EPOCH))
   fi
 
-  # 平均実行時間を計算（過去20回の成功した実行から）
+  # 平均実行時間を計算（過去20回の成功した実行から、同じワークフローのみ）
   if [ -z "$AVERAGE_CALCULATED" ]; then
-    AVERAGE_TIME=$(gh run list --limit 20 --json status,conclusion,createdAt,updatedAt -q '.[] | select(.status == "completed" and .conclusion == "success") | {created: .createdAt, updated: .updatedAt}' 2>/dev/null | jq -r '.created + " " + .updated' 2>/dev/null | while read created updated; do
+    AVERAGE_TIME=$(gh run list --limit 50 --json status,conclusion,createdAt,updatedAt,workflowName -q ".[] | select(.status == \"completed\" and .conclusion == \"success\" and .workflowName == \"$WORKFLOW_NAME\") | {created: .createdAt, updated: .updatedAt}" 2>/dev/null | jq -r '.created + " " + .updated' 2>/dev/null | head -20 | while read created updated; do
       if [ -n "$created" ] && [ -n "$updated" ]; then
         created_epoch=$(date -d "$created" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$created" +%s 2>/dev/null || echo "0")
         updated_epoch=$(date -d "$updated" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$updated" +%s 2>/dev/null || echo "0")
@@ -130,7 +131,7 @@ while true; do
     if [ "$AVERAGE_TIME" -gt 0 ]; then
       AVERAGE_MIN=$((AVERAGE_TIME / 60))
       AVERAGE_SEC=$((AVERAGE_TIME % 60))
-      echo "📊 Average CI duration: ${AVERAGE_MIN}m ${AVERAGE_SEC}s (based on recent successful runs)"
+      echo "📊 Average CI duration for '$WORKFLOW_NAME': ${AVERAGE_MIN}m ${AVERAGE_SEC}s (based on recent successful runs)"
     fi
   fi
 
@@ -140,6 +141,7 @@ while true; do
   
   if [ "$DEBUG" = true ]; then
     echo "DEBUG: Run ID: $RUN_ID"
+    echo "DEBUG: Workflow Name: $WORKFLOW_NAME"
     echo "DEBUG: Created: $RUN_CREATED"
     echo "DEBUG: Updated: $RUN_UPDATED"
     echo "DEBUG: Run Duration: ${RUN_DURATION}s"
