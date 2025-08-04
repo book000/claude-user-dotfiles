@@ -86,7 +86,7 @@ while true; do
   fi
 
   # 最新のワークフロー実行を取得
-  RUN_INFO=$(gh run list --workflow "Node.js CI" --limit 10 --json headBranch,databaseId,status,conclusion,createdAt,updatedAt -q ".[] | select(.headBranch == \"$PR_HEAD_REF\")" | head -n 1)
+  RUN_INFO=$(gh run list --limit 10 --json headBranch,databaseId,status,conclusion,createdAt,updatedAt -q ".[] | select(.headBranch == \"$PR_HEAD_REF\")" | head -n 1)
 
   if [ -z "$RUN_INFO" ]; then
     echo "Monitor: ${ELAPSED_TIME}s - No workflow run found for branch $PR_HEAD_REF. Waiting..."
@@ -116,7 +116,7 @@ while true; do
 
   # 平均実行時間を計算（過去20回の成功した実行から）
   if [ -z "$AVERAGE_CALCULATED" ]; then
-    AVERAGE_TIME=$(gh run list --workflow "Node.js CI" --limit 20 --json status,conclusion,createdAt,updatedAt -q '.[] | select(.status == "completed" and .conclusion == "success") | {created: .createdAt, updated: .updatedAt}' 2>/dev/null | jq -r '.created + " " + .updated' 2>/dev/null | while read created updated; do
+    AVERAGE_TIME=$(gh run list --limit 20 --json status,conclusion,createdAt,updatedAt -q '.[] | select(.status == "completed" and .conclusion == "success") | {created: .createdAt, updated: .updatedAt}' 2>/dev/null | jq -r '.created + " " + .updated' 2>/dev/null | while read created updated; do
       if [ -n "$created" ] && [ -n "$updated" ]; then
         created_epoch=$(date -d "$created" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$created" +%s 2>/dev/null || echo "0")
         updated_epoch=$(date -d "$updated" +%s 2>/dev/null || date -j -f "%Y-%m-%dT%H:%M:%SZ" "$updated" +%s 2>/dev/null || echo "0")
