@@ -14,11 +14,11 @@
       "Update(*)",
       "Fetch",
       "Fetch(*)",
+      "WebSearch",
       "WebFetch",
       "WebFetch(*)",
       "Bash(mkdir:*)",
       "mcp__serena"
-
     ],
     "deny": [
       "Bash(git push --no-verify)",
