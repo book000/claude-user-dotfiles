@@ -5,7 +5,7 @@
   "permissions": {
     "allow": [
       "Bash",
-      "Bash(*:*)",
+      "Bash(:*::*)",
       "List(*)",
       "Read(*)",
       "Write(*)",
@@ -16,7 +16,7 @@
       "Fetch(*)",
       "WebSearch",
       "WebFetch",
-      "WebFetch(*)",
+      "WebFetch(domain:*)",
       "Bash(mkdir:*)",
       "mcp__serena"
     ],
