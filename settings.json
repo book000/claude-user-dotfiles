@@ -5,7 +5,6 @@
   "permissions": {
     "allow": [
       "Bash",
-      "Bash(*:*)",
       "List(*)",
       "Read(*)",
       "Write(*)",
@@ -16,9 +15,9 @@
       "Fetch(*)",
       "WebSearch",
       "WebFetch",
-      "WebFetch(*)",
       "Bash(mkdir:*)",
-      "mcp__serena"
+      "mcp__serena",
+      "mcp__playwright"
     ],
     "deny": [
       "Bash(git push --no-verify)",
