@@ -14,7 +14,7 @@
       "Fetch",
       "Fetch(*)",
       "WebSearch",
-      "WebFetch",
+      "WebFetch(domain:*)",
       "Bash(mkdir:*)",
       "mcp__serena",
       "mcp__playwright"
