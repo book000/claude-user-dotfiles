@@ -58,6 +58,7 @@ INPUT_JSON=$(cat)
 # jqで必要な情報を抽出
 SESSION_ID=$(echo "$INPUT_JSON" | jq -r '.session_id // empty')
 TRANSCRIPT_PATH_RAW=$(echo "$INPUT_JSON" | jq -r '.transcript_path // empty')
+CWD_PATH=$(echo "$INPUT_JSON" | jq -r '.transcript_path // empty')
 
 # パスを変換
 if [[ -n "$TRANSCRIPT_PATH_RAW" ]]; then
@@ -77,7 +78,7 @@ MACHINE_NAME=$(hostname)
 FIELDS="[]"
 
 # フィールド: 実行ディレクトリ
-FIELDS=$(echo "$FIELDS" | jq --arg name "📁 実行ディレクトリ" --arg value "$(pwd)" --arg inline "true" \
+FIELDS=$(echo "$FIELDS" | jq --arg name "📁 実行ディレクトリ" --arg value "$CWD_PATH" --arg inline "true" \
   '. + [{"name": $name, "value": $value, "inline": $inline}]')
 
 # フィールド: セッションID
