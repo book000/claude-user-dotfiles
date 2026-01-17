@@ -71,13 +71,9 @@ fi
 # transcript_path で指定されたファイルが存在しない場合は通知を送信しない
 # ワイルドカードが含まれる場合は展開して確認
 if [[ "$SESSION_PATH" == *"*"* ]]; then
-  # ワイルドカードを展開 (シェルグロブを使用)
-  # nullglob を一時的に有効化してパスを展開
+  # ワイルドカードを展開 (compgen を使用して安全に展開)
   # ※ マッチするファイルがない場合、配列は空になる
-  OLD_NULLGLOB=$(shopt -p nullglob)
-  shopt -s nullglob
-  EXPANDED_PATHS=($SESSION_PATH)
-  eval "$OLD_NULLGLOB"
+  mapfile -t EXPANDED_PATHS < <(compgen -G "$SESSION_PATH")
   
   if [[ ${#EXPANDED_PATHS[@]} -eq 0 ]]; then
     echo "⚠️ Transcript file not found: $SESSION_PATH" >&2
