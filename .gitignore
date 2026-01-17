@@ -1,61 +1,11 @@
-# Claude Code 実行ファイル・バイナリ
-local/
+# .claude は opt-in 方式で設定していく
+/*
+/*/
 
-# プロジェクト固有のセッションデータ（プライバシー保護）
-projects/*/
-todos/
-shell-snapshots/
+!scripts/
 
-# ユーザー固有の設定・認証情報
-.credentials.json
+!.gitignore
+!README.md
+!CLAUDE.md
+!settings.json
 
-# システム・セッションデータ
-statsig/
-
-# ログファイル
-*.log
-logs/
-
-# 一時ファイル・検証スクリプト（アーカイブ後削除）
-verify_*.sh
-check_*.sh
-validation_*.sh
-temp_*.sh
-debug_*.sh
-*.tmp
-*.temp
-*.bak
-*.backup
-
-# OS固有ファイル
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-*.lnk
-
-# エディタ固有ファイル
-.vscode/settings.json
-.idea/
-ide/
-*.swp
-*.swo
-*~
-
-# 機密情報・セキュリティ
-*secret*
-*private*
-*token*
-*key*
-.env*
-api-keys.json
-*.pem
-discord-config.json
-
-# アーカイブ（旧設定の保管用）
-archive/
-
-data/
