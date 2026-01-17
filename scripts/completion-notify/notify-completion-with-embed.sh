@@ -118,7 +118,7 @@ if [[ -n "$LAST_MESSAGES" ]]; then
     else
       emoji="🤖"
     fi
-    FIELDS=$(echo "$FIELDS" | jq --arg name "${emoji} 会話: $type" --arg value "$text" --arg inline "true" \
+    FIELDS=$(echo "$FIELDS" | jq --arg name "${emoji} 会話: $type" --arg value "$text" --arg inline "false" \
       '. + [{"name": $name, "value": $value, "inline": $inline}]')
   done
 fi
