@@ -3,9 +3,9 @@
 /*/
 
 !scripts/
+!rules/
 
 !.gitignore
 !README.md
 !CLAUDE.md
 !settings.json
-

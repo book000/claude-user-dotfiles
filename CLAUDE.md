@@ -10,6 +10,7 @@
 - GitHub リポジトリを調査のために参照する場合、テンポラリディレクトリに git clone して、そこでコード検索してください。
 - Windows 環境ですが、Git Bash で動作しています。bash コマンドを使用してください。PowerShell コマンドを使用する場合は、明示的に `powershell -Command ...` か `pwsh -Command ...` を使用してください。
 - CLAUDE.md の内容は適宜更新しなければなりません。
+- このプロジェクトでは Serena が使用できます。
 
 ## Git Worktree について
 
