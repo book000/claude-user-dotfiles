@@ -72,9 +72,13 @@ fi
 # ワイルドカードが含まれる場合は展開して確認
 if [[ "$SESSION_PATH" == *"*"* ]]; then
   # ワイルドカードを展開 (シェルグロブを使用)
+  # nullglob を一時的に有効化してパスを展開
+  # ※ マッチするファイルがない場合、配列は空になる
+  OLD_NULLGLOB=$(shopt -p nullglob)
   shopt -s nullglob
   EXPANDED_PATHS=($SESSION_PATH)
-  shopt -u nullglob
+  eval "$OLD_NULLGLOB"
+  
   if [[ ${#EXPANDED_PATHS[@]} -eq 0 ]]; then
     echo "⚠️ Transcript file not found: $SESSION_PATH" >&2
     echo "Notification will not be sent." >&2
