@@ -68,6 +68,27 @@ else
   SESSION_PATH="${HOME}/.claude/projects/*/${SESSION_ID}.jsonl"
 fi
 
+# transcript_path で指定されたファイルが存在しない場合は通知を送信しない
+# ワイルドカードが含まれる場合は展開して確認
+if [[ "$SESSION_PATH" == *"*"* ]]; then
+  # ワイルドカードを展開 (compgen を使用して安全に展開)
+  # ※ マッチするファイルがない場合、配列は空になる
+  mapfile -t EXPANDED_PATHS < <(compgen -G "$SESSION_PATH")
+  if [[ ${#EXPANDED_PATHS[@]} -eq 0 ]]; then
+    echo "⚠️ Transcript file not found: $SESSION_PATH" >&2
+    echo "Notification will not be sent." >&2
+    exit 0
+  fi
+  SESSION_PATH="${EXPANDED_PATHS[0]}"
+else
+  # 通常のパスの場合
+  if [[ ! -f "$SESSION_PATH" ]]; then
+    echo "⚠️ Transcript file not found: $SESSION_PATH" >&2
+    echo "Notification will not be sent." >&2
+    exit 0
+  fi
+fi
+
 # 現在時刻の取得
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
