@@ -8,7 +8,7 @@
 #   "stop_hook_active": boolean
 # }
 
-cd $(dirname "$0") || exit 1
+cd "$(dirname "$0")" || exit 1
 source ./.env
 
 # JSON入力を読み取り
@@ -17,12 +17,6 @@ INPUT_JSON=$(cat)
 # jqで必要な情報を抽出
 SESSION_ID=$(echo "$INPUT_JSON" | jq -r '.session_id // empty')
 SESSION_PATH="${HOME}/.claude/projects/*/${SESSION_ID}.jsonl"
-STOP_HOOK_ACTIVE=$(echo "$INPUT_JSON" | jq -r '.stop_hook_active // false')
-
-# 無限ループ防止のチェック
-# if [[ "$STOP_HOOK_ACTIVE" == "true" ]]; then
-#   exit 0
-# fi
 
 # 現在時刻の取得
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
@@ -32,7 +26,7 @@ FIELDS="[]"
 
 # フィールド: 実行ディレクトリ
 FIELDS=$(echo "$FIELDS" | jq --arg name "📁 実行ディレクトリ" --arg value "$(pwd)" --arg inline "true" \
-  '. + [{"name": $name, "value": $value, "inline": $inline}]') 
+  '. + [{"name": $name, "value": $value, "inline": $inline}]')
 
 # フィールド: セッションID
 FIELDS=$(echo "$FIELDS" | jq --arg name "🆔 セッションID" --arg value "$SESSION_ID" --arg inline "true" \

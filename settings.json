@@ -1,29 +1,6 @@
 {
   "env": {
-    "BASH_DEFAULT_TIMEOUT_MS": "10800000"
-  },
-  "permissions": {
-    "allow": [
-      "Bash",
-      "List(*)",
-      "Read(*)",
-      "Write(*)",
-      "Edit(*)",
-      "Update",
-      "Update(*)",
-      "Fetch",
-      "Fetch(*)",
-      "WebSearch",
-      "WebFetch(domain:*)",
-      "Bash(mkdir:*)",
-      "mcp__serena",
-      "mcp__playwright"
-    ],
-    "deny": [
-      "Bash(git push --no-verify)",
-      "Bash(pnpm dev)",
-      "Bash(pnpm dev &)"
-    ]
+    "IS_DEMO": "1"
   },
   "hooks": {
     "Stop": [
@@ -37,5 +14,18 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "claude-code-wakatime@wakatime": true,
+    "context7@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "serena@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "plugin-dev@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true
   }
 }

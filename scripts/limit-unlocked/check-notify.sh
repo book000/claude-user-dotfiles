@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $(dirname "$0") || exit 1
+cd "$(dirname "$0")" || exit 1
 
 TARGET_DIR="$HOME/.claude/projects"
 CURRENT_TS=$(date +%s)

@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ~/.claude/
+cd ~/.claude/ || exit
 git pull
