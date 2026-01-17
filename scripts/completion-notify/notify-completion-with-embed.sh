@@ -58,7 +58,7 @@ INPUT_JSON=$(cat)
 # jqで必要な情報を抽出
 SESSION_ID=$(echo "$INPUT_JSON" | jq -r '.session_id // empty')
 TRANSCRIPT_PATH_RAW=$(echo "$INPUT_JSON" | jq -r '.transcript_path // empty')
-CWD_PATH=$(echo "$INPUT_JSON" | jq -r '.transcript_path // empty')
+CWD_PATH=$(echo "$INPUT_JSON" | jq -r '.cwd // empty')
 
 # パスを変換
 if [[ -n "$TRANSCRIPT_PATH_RAW" ]]; then
