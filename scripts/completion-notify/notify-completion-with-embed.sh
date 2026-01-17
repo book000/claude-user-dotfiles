@@ -71,14 +71,16 @@ fi
 # transcript_path で指定されたファイルが存在しない場合は通知を送信しない
 # ワイルドカードが含まれる場合は展開して確認
 if [[ "$SESSION_PATH" == *"*"* ]]; then
-  # ワイルドカードを展開
-  EXPANDED_PATH=$(ls $SESSION_PATH 2>/dev/null | head -n 1)
-  if [[ -z "$EXPANDED_PATH" ]]; then
+  # ワイルドカードを展開 (シェルグロブを使用)
+  shopt -s nullglob
+  EXPANDED_PATHS=($SESSION_PATH)
+  shopt -u nullglob
+  if [[ ${#EXPANDED_PATHS[@]} -eq 0 ]]; then
     echo "⚠️ Transcript file not found: $SESSION_PATH" >&2
     echo "Notification will not be sent." >&2
     exit 0
   fi
-  SESSION_PATH="$EXPANDED_PATH"
+  SESSION_PATH="${EXPANDED_PATHS[0]}"
 else
   # 通常のパスの場合
   if [[ ! -f "$SESSION_PATH" ]]; then
