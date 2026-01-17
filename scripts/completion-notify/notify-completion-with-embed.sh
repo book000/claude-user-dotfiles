@@ -21,6 +21,9 @@ SESSION_PATH="${HOME}/.claude/projects/*/${SESSION_ID}.jsonl"
 # 現在時刻の取得
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")
 
+# マシン名の取得
+MACHINE_NAME=$(hostname)
+
 # フィールドの構築
 FIELDS="[]"
 
@@ -73,7 +76,7 @@ fi
 # embed形式のJSONペイロードを作成
 PAYLOAD=$(cat <<EOF_JSON
 {
-  "content": "<@${MENTION_USER_ID}> Claude Code Finished",
+  "content": "<@${MENTION_USER_ID}> Claude Code Finished (${MACHINE_NAME})",
   "embeds": [
     {
       "title": "Claude Code セッション完了",
