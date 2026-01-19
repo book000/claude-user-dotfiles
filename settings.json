@@ -3,18 +3,6 @@
     "IS_DEMO": "1"
   },
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "file://~/.claude/hooks/verify-pr-body.md",
-            "if": "output.stdout.includes('github.com') && output.stdout.includes('/pull/') && (input.command.includes('gh pr create') || input.command.includes('gh api') && input.command.includes('/pulls'))"
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "matcher": "",
