@@ -158,7 +158,7 @@ claude-user-dotfiles/
   5. Discord 通知を送信
   6. tmux セッションに "続けてください" を送信
   7. 状態ファイルで通知済みイベントを追跡
-- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL 環境変数
+- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL, MENTION_USER_ID 環境変数
 
 #### scripts/pull.sh
 
@@ -264,7 +264,7 @@ claude-user-dotfiles/
 - **tmux 連携**: 利用制限監視スクリプトで tmux セッションに自動送信
 - **クロスプラットフォーム**: Windows (Git Bash/WSL), Linux, macOS 対応
 - **環境変数**: `DISCORD_TOKEN`, `MENTION_USER_ID`, `DISCORD_WEBHOOK_URL` を使用
-- **状態ファイル**: 利用制限監視で `~/.claude_limit_notified` を使用
+- **状態ファイル**: 利用制限監視で `~/.claude/scripts/limit-unlocked/data/past.txt`, `~/.claude/scripts/limit-unlocked/data/future.txt`, `~/.claude/scripts/limit-unlocked/data/notified.txt` を使用
 - **設定ファイル**: `settings.json` で Claude Code のプラグイン設定を管理
 - **プラグイン**: wakatime, context7, code-review, feature-dev, serena, typescript-lsp, commit-commands, code-simplifier, pr-review-toolkit, plugin-dev, hookify, ask-codex, ask-gemini を有効化
 

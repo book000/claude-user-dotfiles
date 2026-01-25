@@ -35,7 +35,7 @@
 
 - **コメント言語**: 日本語
 - **エラーメッセージ**: 英語
-- **シェバン**: `#!/usr/bin/env bash` を使用
+- **シェバン**: `#!/usr/bin/env bash` を使用（既存スクリプトは `#!/bin/bash` を使用していますが、新規スクリプトでは `#!/usr/bin/env bash` を推奨）
 - **クロスプラットフォーム対応**: Windows (Git Bash/WSL), Linux, macOS をサポート
 - **パス変換**: Windows パス（C:\, WSL, Git Bash）を Unix パスに変換する処理を含める
 
@@ -73,6 +73,7 @@ bash scripts/pull.sh
 
 - **Discord webhook URL や token は `.env` ファイルで管理し、Git にコミットしない。**
 - **環境変数 `DISCORD_TOKEN`, `MENTION_USER_ID`, `DISCORD_WEBHOOK_URL` は設定ファイルや環境変数で管理する。**
+- **`DISCORD_TOKEN` は歴史的な名前だが、実際には Discord webhook URL を保持する環境変数として使用されていることに注意する（`scripts/completion-notify/notify-completion-with-embed.sh` 参照）。今後は `DISCORD_WEBHOOK_URL` の使用を推奨する。**
 - **スクリプト内にハードコードされた認証情報を含めない。**
 - **ログに個人情報や認証情報を出力しない。**
 

@@ -62,6 +62,7 @@ bash -n scripts/pull.sh
 
 - **Discord webhook URL や token は `.env` ファイルで管理し、Git にコミットしない。**
 - **環境変数 `DISCORD_TOKEN`, `MENTION_USER_ID`, `DISCORD_WEBHOOK_URL` は設定ファイルや環境変数で管理する。**
+- **`DISCORD_TOKEN` は歴史的な名前だが、実際には Discord webhook URL を保持する環境変数として使用されていることに注意する（`scripts/completion-notify/notify-completion-with-embed.sh` 参照）。今後は `DISCORD_WEBHOOK_URL` の使用を推奨する。**
 - **スクリプト内にハードコードされた認証情報を含めない。**
 - **ログに個人情報や認証情報を出力しない。**
 
@@ -117,7 +118,7 @@ Claude Code セッション完了時に Discord へ通知を送信する。
 Claude AI 利用制限を監視し、制限解除時に通知する。
 
 - **処理**: セッションファイルスキャン、制限メッセージ検索、Discord 通知、tmux 送信
-- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL 環境変数
+- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL, MENTION_USER_ID 環境変数
 
 #### scripts/pull.sh
 
