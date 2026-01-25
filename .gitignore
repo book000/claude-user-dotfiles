@@ -6,8 +6,11 @@
 
 !scripts/
 !rules/
+!.github/
 
 !.gitignore
 !README.md
 !CLAUDE.md
+!AGENTS.md
+!GEMINI.md
 !settings.json
