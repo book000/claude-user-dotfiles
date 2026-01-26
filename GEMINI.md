@@ -127,7 +127,7 @@ Claude AI 利用制限を監視し、制限解除時に通知する。
 
 - **トリガー**: 手動実行（cron や scheduled task から）
 - **処理**: セッションファイルスキャン、制限メッセージ検索、Discord 通知、tmux 送信
-- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL 環境変数
+- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL, MENTION_USER_ID 環境変数
 
 #### scripts/pull.sh
 
