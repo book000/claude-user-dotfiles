@@ -36,7 +36,7 @@
 
 - **コメント言語**: 日本語
 - **エラーメッセージ言語**: 英語
-- **シェバン**: `#!/usr/bin/env bash` を使用
+- **シェバン**: `#!/bin/bash` を使用（既存スクリプトとの整合性のため）
 - **クロスプラットフォーム対応**: Windows (Git Bash/WSL), Linux, macOS をサポート
 
 ## 開発コマンド
@@ -127,7 +127,7 @@ Claude AI 利用制限を監視し、制限解除時に通知する。
 
 - **トリガー**: 手動実行（cron や scheduled task から）
 - **処理**: セッションファイルスキャン、制限メッセージ検索、Discord 通知、tmux 送信
-- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL 環境変数
+- **依存**: tmux, jq, curl, DISCORD_WEBHOOK_URL, MENTION_USER_ID 環境変数
 
 #### scripts/pull.sh
 
@@ -161,13 +161,15 @@ git pull の convenience wrapper。"already up to date" メッセージをフィ
 
 ### 環境変数
 
-- `DISCORD_TOKEN`: Discord webhook URL (notify-completion-with-embed.sh で使用)
-- `MENTION_USER_ID`: Discord メンション用ユーザー ID (notify-completion-with-embed.sh で使用)
-- `DISCORD_WEBHOOK_URL`: Discord webhook URL (check-notify.sh で使用)
+- `DISCORD_TOKEN`: Discord webhook URL を格納する環境変数（名前は token だが、実体は Webhook URL。notify-completion-with-embed.sh で使用）
+- `MENTION_USER_ID`: Discord メンション用ユーザー ID (notify-completion-with-embed.sh, check-notify.sh で使用)
+- `DISCORD_WEBHOOK_URL`: Discord webhook URL (check-notify.sh で使用。今後はこちらの名称に統一することを推奨)
 
 ### 状態ファイル
 
-- `~/.claude_limit_notified`: 利用制限監視スクリプトで通知済みイベントを追跡
+- `~/.claude/scripts/limit-unlocked/data/past.txt`: 利用制限監視スクリプトで過去の制限イベントを記録
+- `~/.claude/scripts/limit-unlocked/data/future.txt`: 利用制限監視スクリプトで今後の制限予定を管理
+- `~/.claude/scripts/limit-unlocked/data/notified.txt`: 利用制限監視スクリプトで通知済みイベントを追跡
 
 ### 設定ファイル
 
