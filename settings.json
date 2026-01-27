@@ -28,6 +28,7 @@
     "plugin-dev@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
     "ask-codex@hiropon-plugins": true,
-    "ask-gemini@hiropon-plugins": true
+    "ask-gemini@hiropon-plugins": true,
+    "ask-copilot@hiropon-plugins": true
   }
 }
